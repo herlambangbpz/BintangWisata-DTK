@@ -1,0 +1,60 @@
+.tourDetail{
+  .iconShare{
+    font-size: 24px;
+  }
+  .iconStar{
+    margin-right: 4px;
+    margin-top: 8px;
+  }
+  .lineBolder{
+    border-bottom: 1px solid black;
+  }
+  .lineBolderTab{
+    border: 0.5px solid black;
+    border-radius: 10px;
+  }
+  .iconSpecification{
+    margin: 0px 4px 8px 4px;
+  }
+  .tourInfo{
+    ion-row{
+      background: #EFF0F8;
+      padding:8px;
+      margin-bottom: 16px;
+    }
+  }
+  .elementID{
+    // border: 1px solid black;
+    // border-radius: 2px;
+    .text{
+      text-align: center;
+      padding: 1px;
+    }
+  }
+  .imageIndex{
+    ion-badge{
+      padding:8px;
+      background-color: var(--ion-color-dark, #222428) !important;
+    }
+    margin-top: -53px;
+  }
+  .full-width-slide{
+    z-index: 0;
+    img{
+      width: 100% !important;
+    }
+  }
+
+  --background: #eeeeee;
+  .tourDetailSlides{
+    z-index: 0;
+    img{
+      width: 100%;
+    height: 240px;
+    object-fit: cover;
+    }
+  }
+}
+.modalItenerary{
+  --background: #eeeeee;
+}

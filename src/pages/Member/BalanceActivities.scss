@@ -1,0 +1,23 @@
+
+.balanceActivities::part(scroll) {
+  padding: 0 !important;
+}
+.balanceActivities {
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn{
+    color: black !important;
+    font-weight: normal;
+  }
+  .ant-tabs > .ant-tabs-nav, .ant-tabs > div > .ant-tabs-nav{
+    margin: 0 24px;
+  }
+  h5{
+    font-size: 12px;
+  }
+  h6{
+    color: var(--ion-color-medium);
+    font-size: 10px;
+  }
+  .ant-tabs-tabpane{
+    height: 80vh;
+  }
+}

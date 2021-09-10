@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,kBAAkB,CAAA;EAChB,UAAU,EAAE,eAAe;CAC5B;;AACD,AAAA,cAAc,CAAA;EACZ,OAAO,EAAE,YAAY;CACtB",
+    "sources": [
+        "../../src/pages/Transaction/HistoryList.scss"
+    ],
+    "names": [],
+    "file": "HistoryList.css"
+}

@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AACI,oBADgB,AAAA,aAAa,CAC7B,QAAQ,CAAA;EACN,KAAK,EAAE,wBAAwB,CAAC,UAAU;CAC3C;;AAHL,AAII,oBAJgB,AAAA,aAAa,CAI7B,SAAS,CAAA;EACP,KAAK,EAAE,wBAAwB;CAChC",
+    "sources": [
+        "../../src/pages/MainTabs.scss"
+    ],
+    "names": [],
+    "file": "MainTabs.css"
+}

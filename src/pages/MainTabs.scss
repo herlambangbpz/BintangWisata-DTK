@@ -1,0 +1,8 @@
+.bottomMainTabButton.tab-selected{
+    ion-icon{
+      color: var(--ion-color-primary) !important;
+    }
+    ion-label{
+      color: var(--ion-color-primary);
+    }
+}

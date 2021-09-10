@@ -1,0 +1,14 @@
+.logoutButton{
+  margin: 12px;
+  border: 2px solid var(--ion-color-danger);
+  border-radius: 8px;
+  h6{
+    color: var(--ion-color-danger);
+  }
+
+}
+.profileUpload{
+  width: 200px;
+    height: 200px;
+    object-fit: cover;
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "label": "Pesawat",
+    "imagePath": "assets/icon/PlaneIcon.svg",
+    "historyPush": "/airlineSearch"
+  },
+  {
+    "label": "Hotel",
+    "imagePath": "assets/icon/HotelIcon.svg",
+    "historyPush": ""
+  },
+  {
+    "label": "Kapal Laut",
+    "imagePath": "assets/icon/ShipIcon.svg",
+    "historyPush": ""
+  },
+  {
+    "label": "Kereta Api",
+    "imagePath": "assets/icon/TrainIcon.svg",
+    "historyPush": ""
+  },
+  {
+    "label": "Paket Tur",
+    "imagePath": "assets/icon/TourIcon.svg",
+    "historyPush": "/tour"
+  },
+  {
+    "label": "Event",
+    "imagePath": "assets/icon/EventIcon.svg",
+    "historyPush": ""
+  },
+  {
+    "label": "Airport Transfer",
+    "imagePath": "assets/icon/AirportTransferIcon.svg",
+    "historyPush": ""
+  },
+  {
+    "label": "Travel",
+    "imagePath": "assets/icon/TravelIcon.svg",
+    "historyPush": ""
+  },
+  {
+    "label": "Sewa Mobil",
+    "imagePath": "assets/icon/CarRentIcon.svg",
+    "historyPush": ""
+  },
+  {
+    "label": "Bus",
+    "imagePath": "assets/icon/BusIcon.svg",
+    "historyPush": ""
+  },
+  {
+    "label": "Umrah",
+    "imagePath": "assets/icon/UmrahIcon.svg",
+    "historyPush": ""
+  },
+  {
+    "label": "Doa",
+    "imagePath": "assets/icon/DoaIcon.svg",
+    "historyPush": ""
+  },
+  {
+    "label": "Pulsa",
+    "imagePath": "assets/icon/PulsaIcon.svg",
+    "historyPush": "/Prepaid"
+  },
+  {
+    "label": "PPOB",
+    "imagePath": "assets/icon/PPOBIcon.svg",
+    "historyPush": "/PPOB"
+  }
+]

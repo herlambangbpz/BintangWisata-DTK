@@ -1,0 +1,68 @@
+
+.wizardHeader{
+  background-color: var(--ion-color-primary);
+  font-size: 13px;
+  .col-disable{
+    opacity: 0.5;
+  }
+  span{
+    background: white;
+    display: inline-block;
+    color:var(--ion-color-primary);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+  .product-card{
+    padding: 4px;
+    img{
+      height: 64px;
+      object-fit: cover;
+      width: 64px;
+      border-radius: 6px;
+    }
+  }
+  h6 {
+    font-size: 10px;
+    margin: 0;
+  }
+}
+
+
+.orange-bg{
+  background: #FFAA00;
+}
+.timer{
+ p{
+  margin-top: 4px;
+  margin-bottom: 0;
+ }
+}
+ion-card{
+  ion-item{
+    --background:transparent
+  }
+}
+
+.payment-logo{
+  margin: 16px 16px 0 0;
+}
+.priceCollapse{
+  padding: 16px 0;
+    border-bottom: 1px solid var(--ion-color-medium);
+    margin-bottom: 8px;
+  ion-icon{
+    position: absolute;
+    right: 8px;
+    top: 0px;
+  }
+  h5{
+    padding-right: 40px;
+  }
+}
+
+.paymentLogo{
+  position: absolute;
+  top: -10px;
+}

@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AACE,SADO,CACP,WAAW,CAAC;EACV,QAAQ,EAAE,QAAQ;EAElB,MAAM,EAAE,IAAI;EACZ,KAAK,EAAE,IAAI;EAEX,gBAAgB,EAAE,WAAW;EAE7B,OAAO,EAAE,CAAC;EACV,UAAU,EAAE,qBAAqB;CAClC;;AAXH,AAaE,SAbO,CAaP,SAAS,CAAC;EACR,OAAO,EAAE,CAAC;CACX",
+    "sources": [
+        "../../backup/7-10-2020/src/pages/MapView.scss"
+    ],
+    "names": [],
+    "file": "MapView.css"
+}

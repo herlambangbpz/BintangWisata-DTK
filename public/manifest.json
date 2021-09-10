@@ -1,0 +1,39 @@
+{
+  "short_name": "Duta Travel Lite",
+  "name": "Duta Travel Lite",
+  "icons": [
+    {
+      "src": "assets/icon/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+        "src": "assets/icon/icon-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "maskable"
+    },
+    {
+        "src": "assets/icon/icon-256x256.png",
+        "sizes": "256x256",
+        "type": "image/png",
+        "purpose": "maskable"
+    },
+    {
+        "src": "assets/icon/icon-384x384.png",
+        "sizes": "384x384",
+        "type": "image/png",
+        "purpose": "maskable"
+    },
+    {
+        "src": "assets/icon/icon-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#184DC9",
+  "background_color": "#ffffff"
+}

@@ -1,0 +1,57 @@
+.wizardHeader {
+  background-color: var(--ion-color-primary);
+  font-size: 13px;
+}
+
+.wizardHeader .col-disable {
+  opacity: 0.5;
+}
+
+.wizardHeader span {
+  background: white;
+  display: inline-block;
+  color: var(--ion-color-primary);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.wizardHeader .product-card {
+  padding: 4px;
+}
+
+.wizardHeader .product-card img {
+  height: 64px;
+  object-fit: cover;
+  width: 64px;
+  border-radius: 6px;
+}
+
+.wizardHeader h6 {
+  font-size: 10px;
+  margin: 0;
+}
+
+.timeLimitPayment {
+  background: var(--ion-color-warning);
+  border-radius: 6px;
+  padding: 16px;
+  margin: 16px;
+}
+
+.timeLimitPayment ion-text {
+  font-size: 16px;
+}
+
+.timeLimitPayment span {
+  border-radius: 4px;
+  background: white;
+  margin: 8px auto;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid var(--ion-color-primary);
+  color: var(--ion-color-primary);
+  display: inline-block;
+}
+/*# sourceMappingURL=Complete.css.map */

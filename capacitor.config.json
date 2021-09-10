@@ -1,0 +1,8 @@
+{
+  "appId": "id.co.dutateknologikreatif.dutatravel",
+  "appName": "DutaTravel",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "build",
+  "cordova": {}
+}

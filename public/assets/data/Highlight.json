@@ -1,0 +1,19 @@
+[
+  {
+    "label": "Outbound",
+    "imagePath": "assets/icon/OutboundIcon.png",
+    "historyPush": "/"
+  },{
+    "label": "Domestik",
+    "imagePath": "assets/icon/DomesticIcon.png",
+    "historyPush": ""
+  },{
+    "label": "Motorsport",
+    "imagePath": "assets/icon/MotorsportIcon.png",
+    "historyPush": ""
+  },{
+    "label": "Halal Trip",
+    "imagePath": "assets/icon/HalalTripIcon.png",
+    "historyPush": ""
+  }
+]

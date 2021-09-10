@@ -1,0 +1,77 @@
+#beranda .services ion-label {
+  font-size: 10px;
+}
+
+#beranda .customFreeSlides ion-slide img {
+  border-radius: 8px;
+}
+
+#beranda .shadow-card {
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+#beranda .news-wrapper p {
+  font-size: 14px;
+  margin: 0;
+}
+
+#beranda ion-header ion-buttons img {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  margin-left: 8px;
+  border: 1px solid white;
+}
+
+#beranda ion-header ion-buttons ion-button {
+  text-transform: none;
+}
+
+#beranda ion-header .search {
+  padding: 8px;
+  padding-top: 0 !important;
+}
+
+#beranda ion-header ion-toolbar .searchbar-input {
+  border-radius: 6px !important;
+}
+
+.tour-packages-wrapper ion-card-title {
+  font-size: 12px;
+}
+
+.tour-packages-wrapper ion-card {
+  margin-bottom: 8px;
+}
+
+.servicesPopover .popover-content {
+  bottom: 0;
+  top: auto !important;
+  transform-origin: bottom !important;
+  width: 100% !important;
+  left: 0 !important;
+  border-top-left-radius: 32px !important;
+  border-top-right-radius: 32px !important;
+}
+
+.servicesPopover .popover-content ion-label {
+  font-size: 10px;
+}
+
+.white-bg {
+  background-color: white;
+}
+
+.medium-bg {
+  background: var(--ion-medium-color);
+}
+
+.text-transform-none {
+  text-transform: none;
+}
+
+.footerPrice {
+  box-shadow: 0px -3px 13px 5px rgba(50, 50, 50, 0.29);
+}
+/*# sourceMappingURL=Beranda.css.map */

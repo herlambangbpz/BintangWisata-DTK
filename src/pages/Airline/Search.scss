@@ -1,0 +1,18 @@
+.searchToolbar{
+  ion-grid{
+    background: rgba(255,255,255,0.2);
+    border-radius: 8px;
+    margin: 0 16px 16px 16px;
+  }
+}
+ion-header{
+  .search{
+    padding: 8px;
+    padding-top:0 !important;
+  }
+  ion-toolbar{
+    .searchbar-input{
+      border-radius: 6px !important;
+    }
+  }
+}

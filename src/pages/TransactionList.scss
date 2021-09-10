@@ -1,0 +1,21 @@
+.no-transaction{
+  position: relative;
+   width: 100%;
+   padding-top: 100%; /* 1:1 Aspect Ratio */
+   p{
+    position:  absolute;
+    top: 40%;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+   }
+}
+
+.transaction-list{
+  .ion-color-light {
+    --ion-color-contrast: var(--ion-color-primary) !important;
+  }
+}

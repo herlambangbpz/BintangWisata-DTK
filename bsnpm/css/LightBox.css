@@ -1,0 +1,37 @@
+.tourLightBox {
+  --background:black;
+}
+
+.tourLightBox ion-toolbar {
+  --background:none;
+}
+
+.tourLightBox .full-lightbox-slides {
+  position: relative;
+  top: 35%;
+  transform: translateY(-35%);
+  width: 100%;
+}
+
+.tourLightBox .full-lightbox-slides ion-slide {
+  height: 400px;
+}
+
+.tourLightBox .full-lightbox-slides img {
+  width: 100% !important;
+  height: 300px;
+  object-fit: cover;
+}
+
+.tourLightBox .thumb-lightbox-slides {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.tourLightBox .thumb-lightbox-slides img {
+  width: 100% !important;
+  height: 100px;
+  object-fit: cover;
+}
+/*# sourceMappingURL=LightBox.css.map */

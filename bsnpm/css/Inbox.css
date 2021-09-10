@@ -1,0 +1,31 @@
+.ant-tabs > .ant-tabs-nav .ant-tabs-nav-list, .ant-tabs > div > .ant-tabs-nav .ant-tabs-nav-list {
+  width: 100%;
+}
+
+.ant-tabs-large > .ant-tabs-nav .ant-tabs-tab {
+  width: 50%;
+  text-align: center;
+  margin: 0;
+}
+
+.ant-tabs-tab-btn {
+  width: 100%;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--ion-color-primary) !important;
+}
+
+.ant-tabs > .ant-tabs-nav, .ant-tabs > div > .ant-tabs-nav {
+  color: #989898;
+}
+
+.ant-tabs-ink-bar {
+  background: var(--ion-color-primary) !important;
+}
+
+.ant-tabs-tabpane {
+  height: 70vh;
+  overflow-x: scroll;
+}
+/*# sourceMappingURL=Inbox.css.map */

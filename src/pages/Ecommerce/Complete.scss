@@ -1,0 +1,49 @@
+.wizardHeader{
+  background-color: var(--ion-color-primary);
+  font-size: 13px;
+  .col-disable{
+    opacity: 0.5;
+  }
+  span{
+    background: white;
+    display: inline-block;
+    color:var(--ion-color-primary);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+  .product-card{
+    padding: 4px;
+    img{
+      height: 64px;
+      object-fit: cover;
+      width: 64px;
+      border-radius: 6px;
+    }
+  }
+  h6 {
+    font-size: 10px;
+    margin: 0;
+  }
+}
+.timeLimitPayment{
+  background:var(--ion-color-warning);
+  border-radius:6px;
+  
+  padding:16px;
+  margin:16px;
+  ion-text{
+    font-size:16px;
+  }
+  span{
+    border-radius:4px;
+    background:white;
+    margin:8px auto;
+    padding:8px;
+    font-size:16px;
+    border: 1px solid var(--ion-color-primary);
+    color:var(--ion-color-primary);
+    display:inline-block;
+  }
+}
