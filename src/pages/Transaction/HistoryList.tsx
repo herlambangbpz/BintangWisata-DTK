@@ -234,7 +234,14 @@ const Search: React.FC<SearchProps> = ({
       setPageFrom(PageFrom + 10);
       setPageTo(PageTo + 10);
     } else {
-      alert("Semua data transaksi sudah muncul");
+      if (data.length > 10) {
+        alert("Semua data transaksi sudah muncul");
+      } else {
+        setLimitedTransactionList([
+          ...LimitedTransactionList,
+          ...data.slice(PageFrom, PageTo),
+        ]);
+      }
     }
   };
 
