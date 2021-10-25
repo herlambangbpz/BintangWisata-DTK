@@ -237,6 +237,7 @@ const Search: React.FC<SearchProps> = ({
       if (data.length > 10) {
         alert("Semua data transaksi sudah muncul");
       } else {
+        alert("terbatas");
         setLimitedTransactionList([
           ...LimitedTransactionList,
           ...data.slice(PageFrom, PageTo),
