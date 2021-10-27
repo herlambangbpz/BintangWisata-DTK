@@ -224,40 +224,6 @@ const HistoryDetailFlightticket: React.FC<HistoryDetailFlightticketProps> = ({
               </IonRow>
             </IonGrid>
           ))}
-          {TransactionHistoryDetail.Passengers.map((item, index) => (
-            <IonGrid
-              className="ion-margin-top white-bg ion-padding ion-margin-bottom"
-              key={index}
-            >
-              <IonRow className="ion-align-items-center">
-                <IonCol size="1">
-                  <IonIcon icon={person} color="medium"></IonIcon>
-                </IonCol>
-                <IonCol size="11">
-                  <IonText>
-                    {item.Title}. {item.Name}
-                  </IonText>
-                </IonCol>
-              </IonRow>
-            </IonGrid>
-          ))}
-          {TransactionHistoryDetail.Passengers.map((item, index) => (
-            <IonGrid
-              className="ion-margin-top white-bg ion-padding ion-margin-bottom"
-              key={index}
-            >
-              <IonRow className="ion-align-items-center">
-                <IonCol size="1">
-                  <IonIcon icon={person} color="medium"></IonIcon>
-                </IonCol>
-                <IonCol size="11">
-                  <IonText>
-                    {item.Title}. {item.Name}
-                  </IonText>
-                </IonCol>
-              </IonRow>
-            </IonGrid>
-          ))}
           {/* <TourDetail
             TransactionHistoryDetail={TransactionHistoryDetail}
           ></TourDetail>
