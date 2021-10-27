@@ -38,7 +38,8 @@ interface OwnProps {
   item: any;
   AOPD?: any;
   PassengerTitle?: any;
-  domesticTourType: boolean;
+  UseLionOrBatik: boolean;
+  UseGaruda: boolean;
   Nationalities: any;
 }
 interface StateProps {}
@@ -54,7 +55,8 @@ interface AirlineOrderBuyerDataItemProps
 const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
   indexItem,
   item,
-  domesticTourType,
+  UseLionOrBatik,
+  UseGaruda,
   PassengerTitle,
   setAirlineOrderPassengersData,
   loadAirlineOrderPassengersData,
@@ -82,6 +84,9 @@ const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
   const [PaxPassportNumber, setPaxPassportNumber] = useState(
     item.PaxPassportNumber
   );
+  const [PaxGarudaFrequentFlyer, setPaxGarudaFrequentFlyer] = useState(
+    item.PaxGarudaFrequentFlyer
+  );
   const [PaxParent, setPaxParent] = useState(item.PaxParent);
   const [PaxTitle, setPaxTitle] = useState(item.PaxTitle);
   const [CountryList, setCountryList] = useState<any>(null);
@@ -98,6 +103,7 @@ const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
     setPaxPassportIssuedCountry(item.PaxPassportIssuedCountry);
     setPaxPassportIssuedDate(item.PaxPassportIssuedDate);
     setPaxPassportNumber(item.PaxPassportNumber);
+    setPaxGarudaFrequentFlyer(item.PaxGarudaFrequentFlyer);
     setPaxTitle(item.PaxTitle);
   });
 
@@ -134,6 +140,10 @@ const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
       failedAlert("Penumpang bayi wajib memilih orang tua");
       return;
     }
+    if (UseLionOrBatik && PaxPassportNumber === "") {
+      failedAlert("Passport / KTP Wajib Diisi");
+      return;
+    }
     PaxDataSaveToLocal();
     setModal(false);
   };
@@ -146,7 +156,7 @@ const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
       PaxBirthCountry: PaxBirthCountry,
       PaxBirthDate: PaxBirthDate,
       PaxFirstName: PaxFirstName,
-      PaxGarudaFrequentFlyer: null,
+      PaxGarudaFrequentFlyer: PaxGarudaFrequentFlyer,
       PaxGender: PaxGender,
       PaxLastName: PaxLastName,
       PaxNationality: PaxNationality,
@@ -178,6 +188,7 @@ const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
     setPaxPassportIssuedCountry(item.PaxPassportIssuedCountry);
     setPaxPassportIssuedDate(item.PaxPassportIssuedDate);
     setPaxPassportNumber(item.PaxPassportNumber);
+    setPaxGarudaFrequentFlyer(item.PaxGarudaFrequentFlyer);
     setPaxTitle(item.PaxTitle);
     setModal(false);
   };
@@ -194,15 +205,39 @@ const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
 
   // console.log(PassengerTitle[item.PaxType.split(" ")[0] || "Adult"]);
   // console.log(AOPD);
-
+  const AutoFillOrderPerson = (AOOP) => {
+    if (AOOP.OrderPersonMethod === "0") {
+      setPaxTitle(AOOP.OrderPersonTitel);
+      setPaxFirstName(AOOP.OrderPersonFirstName);
+      setPaxLastName(AOOP.OrderPersonLastName);
+      const Gender =
+        AOOP.OrderPersonTitel === "MR"
+          ? "Male"
+          : AOOP.OrderPersonTitel === "MS"
+          ? "Female"
+          : AOOP.OrderPersonTitel === "MISS"
+          ? "Female"
+          : AOOP.OrderPersonTitel === "MSTR"
+          ? "Male"
+          : "Male";
+      setPaxGender(Gender);
+    } else {
+      setPaxTitle("");
+      setPaxFirstName("");
+      setPaxLastName("");
+      setPaxGender("Male");
+    }
+  };
   return (
     <div className="ion-no-padding">
       <IonCard
         className="ion-activatable ripple-parent ion-margin-bottom"
         onClick={() => {
           const AOOP = localStorage.getItem("AirlineOrderOrderPerson");
-
           if (AOOP && JSON.parse(AOOP).OrderPersonMethod) {
+            if (indexItem === 0) {
+              AutoFillOrderPerson(JSON.parse(AOOP));
+            }
             setModal(true);
           } else {
             failedAlert("Pastikan data pemesan sudah terisi dengan benar");
@@ -327,7 +362,7 @@ const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
                   </IonSelect>
                 </IonItem>
               </IonCol>
-              <IonCol size="12" hidden={domesticTourType}>
+              <IonCol size="12">
                 <IonItem className="ion-no-padding">
                   <IonLabel className="ion-padding-start">
                     <small>Kewarganegaraan</small>
@@ -345,7 +380,7 @@ const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
                   </IonSelect>
                 </IonItem>
               </IonCol>
-              <IonCol size="12" hidden={domesticTourType}>
+              <IonCol size="12">
                 <IonItem>
                   <IonLabel>
                     <small>Tanggal Lahir</small>
@@ -384,7 +419,7 @@ const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
                   </IonSelect>
                 </IonItem>
               </IonCol>
-              <IonCol size="12" hidden={domesticTourType}>
+              <IonCol size="12" hidden={!UseLionOrBatik}>
                 <IonItem>
                   <IonLabel position="floating">
                     <small>Nomor Passport</small>
@@ -396,7 +431,7 @@ const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
                   ></IonInput>
                 </IonItem>
               </IonCol>
-              <IonCol size="12" hidden={domesticTourType}>
+              <IonCol size="12" hidden={!UseLionOrBatik}>
                 <IonItem>
                   <IonLabel>
                     <small>Tanggal Dikeluarkan</small>
@@ -410,7 +445,7 @@ const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
                   ></IonDatetime>
                 </IonItem>
               </IonCol>
-              <IonCol size="12" hidden={domesticTourType}>
+              <IonCol size="12" hidden={!UseLionOrBatik}>
                 <IonItem className="ion-no-padding">
                   <IonLabel className="ion-padding-start">
                     <small>Negara Penerbit</small>
@@ -430,7 +465,7 @@ const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
                   </IonSelect>
                 </IonItem>
               </IonCol>
-              <IonCol size="12" hidden={domesticTourType}>
+              <IonCol size="12" hidden={!UseLionOrBatik}>
                 <IonItem>
                   <IonLabel>
                     <small>Tanggal Habis Berlaku</small>
@@ -444,7 +479,7 @@ const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
                   ></IonDatetime>
                 </IonItem>
               </IonCol>
-              <IonCol size="12" hidden={domesticTourType}>
+              <IonCol size="12" hidden={!UseLionOrBatik}>
                 <IonItem>
                   <IonLabel position="floating">
                     <small>Lion Passport/Batik Miles No </small>
@@ -453,6 +488,20 @@ const AirlineOrderBuyerDataItem: React.FC<AirlineOrderBuyerDataItemProps> = ({
                     type="text"
                     value={PaxBatikMilesNo}
                     onIonChange={(e) => setPaxBatikMilesNo(e.detail.value!)}
+                  ></IonInput>
+                </IonItem>
+              </IonCol>
+              <IonCol size="12" hidden={!UseGaruda}>
+                <IonItem>
+                  <IonLabel position="floating">
+                    <small>Garuda Frequent Flyer</small>
+                  </IonLabel>
+                  <IonInput
+                    type="text"
+                    value={PaxGarudaFrequentFlyer}
+                    onIonChange={(e) =>
+                      setPaxGarudaFrequentFlyer(e.detail.value!)
+                    }
                   ></IonInput>
                 </IonItem>
               </IonCol>

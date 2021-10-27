@@ -32,6 +32,8 @@ import AirlineSearchFormDeparture from "./AirlineSearchFormDeparture";
 interface OwnProps {}
 interface StateProps {
   AirlineBooking: any;
+  ABDD: any;
+  ABAD: any;
 }
 interface DispatchProps {
   setAirlineBookingDepartureDate: typeof setAirlineBookingDepartureDate;
@@ -49,6 +51,8 @@ interface AirlineSearchFromProps
     RouteComponentProps {}
 const AirlineSearchFrom: React.FC<AirlineSearchFromProps> = ({
   AirlineBooking,
+  ABDD,
+  ABAD,
   setAirlineBookingDepartureDate,
   setAirlineBookingArrivalDate,
   setAirlineBookingTripType,
@@ -77,9 +81,35 @@ const AirlineSearchFrom: React.FC<AirlineSearchFromProps> = ({
     bottom: "-100vh",
   });
   const handleDepartureDateChange = (date) => {
+    if (date.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0)) {
+      alert("Tanggal tidak bisa dipilih");
+      return;
+    }
+    if (date.setHours(0, 0, 0, 0) > ABAD.setHours(0, 0, 0, 0)) {
+      const TempDate = new Date(date);
+      const AddedDate = new Date(TempDate.setDate(date.getDate() + 1));
+      setAirlineBookingArrivalDate(AddedDate);
+    }
     setAirlineBookingDepartureDate(date);
   };
   const handleArrivalDateChange = (date) => {
+    if (
+      date.setHours(0, 0, 0, 0) <
+      new Date(new Date().setDate(new Date().getDate() + 1)).setHours(
+        0,
+        0,
+        0,
+        0
+      )
+    ) {
+      alert("Tanggal tidak bisa dipilih");
+      return;
+    }
+    if (date.setHours(0, 0, 0, 0) < ABDD.setHours(0, 0, 0, 0)) {
+      const TempDate = new Date(date);
+      const AddedDate = new Date(TempDate.setDate(date.getDate() + -1));
+      setAirlineBookingDepartureDate(AddedDate);
+    }
     setAirlineBookingArrivalDate(date);
   };
   // BottomDrawer Style Function
@@ -413,6 +443,8 @@ const AirlineSearchFrom: React.FC<AirlineSearchFromProps> = ({
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
     AirlineBooking: selectors.getAirlineBooking(state),
+    ABDD: state.airline.AirlineBookingDepartureDate,
+    ABAD: state.airline.AirlineBookingArrivalDate,
   }),
   mapDispatchToProps: {
     setAirlineBookingDepartureDate,

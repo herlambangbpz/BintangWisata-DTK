@@ -232,8 +232,12 @@ const AirlineSearchSecondFlight: React.FC<AirlineSearchSecondFlightProps> = ({
         </IonGrid>
       </IonHeader>
       <IonContent fullscreen={true} class="airlineSearch gray-bg">
-        {AirlineFlightJourney && AirlineFlightJourney.Return
-          ? AirlineFlightJourney.Return.map((item, index) => (
+        {AirlineFlightJourney &&
+        AirlineFlightJourney.Return &&
+        AirlineFlightDeparture
+          ? AirlineFlightJourney.Return.filter(
+              (r) => r.airlineID === AirlineFlightDeparture.airlineID
+            ).map((item, index) => (
               <IonCard
                 className="ion-p-8"
                 key={index}

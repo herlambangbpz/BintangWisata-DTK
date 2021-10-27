@@ -1,6 +1,6 @@
 {
-  "appId": "id.co.dutateknologikreatif.dutatravel",
-  "appName": "DutaTravel",
+  "appId": "id.co.dutateknologikreatif.bintangwisata",
+  "appName": "BintangWisata",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "build",

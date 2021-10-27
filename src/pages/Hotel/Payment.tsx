@@ -4,6 +4,7 @@ import {
   IonButton,
   IonButtons,
   IonCard,
+  IonCardContent,
   IonCol,
   IonContent,
   IonFooter,
@@ -12,6 +13,7 @@ import {
   IonIcon,
   IonLoading,
   IonPage,
+  IonRippleEffect,
   IonRow,
   IonText,
   IonTitle,
@@ -20,38 +22,29 @@ import {
   useIonViewDidEnter,
 } from "@ionic/react";
 
-import { chevronDown, chevronUp } from "ionicons/icons";
-import React, { useEffect, useState } from "react";
+import { chevronDown, chevronUp, timeOutline } from "ionicons/icons";
+import React, { useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
 import { connect } from "../../data/connect";
 import * as selectors from "../../data/selectors";
 import { setTourPaymentAllowStatus } from "../../data/tour/tour.actions";
 import "./Order.scss";
-import { Collapse } from "antd";
-import { DefaultAva } from "../../AppConfig";
 import AirlineWizard from "../../components/Airline/AirlineWizard";
-import AirlineOrderBuyerData from "../../components/Airline/AirlineOrderBuyerData";
-import AirlineOrderOrderPerson from "../../components/Airline/AirlineOrderOrderPerson";
-import AirlineOrderBaggage from "../../components/Airline/AirlineOrderBaggage";
-import { rupiah } from "../../helpers/currency";
-import {
-  loadAirlineBookingDataBundleData,
-  loadAirlineOrderPassengersBaggage,
-} from "../../data/airline/airline.actions";
+import AirlinePaymentChoosePayment from "../../components/Airline/AirlinePaymentChoosePayment";
+import AirlinePaymentVoucherCode from "../../components/Airline/AirlinePaymentVoucherCode";
+import { Collapse } from "antd";
 import { AppId, MainUrl } from "../../AppConfig";
 import { HTTP } from "@ionic-native/http";
+import { loadAirlineBookingDataBundleData } from "../../data/airline/airline.actions";
+import { rupiah } from "../../helpers/currency";
 const { Panel } = Collapse;
 interface OwnProps {}
 interface StateProps {
   UserData: any;
   ABDB: any;
-  AOPD: any;
-  AOPB?: any;
 }
 interface DispatchProps {
-  // setTourPaymentAllowStatus: typeof setTourPaymentAllowStatus;
   loadAirlineBookingDataBundleData: typeof loadAirlineBookingDataBundleData;
-  loadAirlineOrderPassengersBaggage: typeof loadAirlineOrderPassengersBaggage;
 }
 interface OrderProps
   extends OwnProps,
@@ -62,44 +55,28 @@ const Order: React.FC<OrderProps> = ({
   history,
   UserData,
   ABDB,
-  AOPD,
-  AOPB,
   loadAirlineBookingDataBundleData,
-  loadAirlineOrderPassengersBaggage,
 }) => {
-  const [showLoading, setShowLoading] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-  const [headerAlert, setHeaderAlert] = useState<string>();
-  const [messageAlert, setMessageAlert] = useState<string>();
-  const failedAlert = (errorMessage: string) => {
-    setShowLoading(false);
-    setHeaderAlert("Ups! ada yang kurang");
-    setMessageAlert(errorMessage);
-    setShowAlert(true);
-  };
-  const [UseLionOrBatik, setUseLionOrBatik] = useState(
-    (ABDB &&
-      ABDB.AirlineFlightDeparture &&
-      ABDB.AirlineFlightDeparture.airlineID === "JT") ||
-      (ABDB &&
-        ABDB.AirlineFlightDeparture &&
-        ABDB.AirlineFlightDeparture.airlineID === "ID")
-      ? true
-      : false
-  );
-  const [UseGaruda, setUseGaruda] = useState(
-    ABDB &&
-      ABDB.AirlineFlightDeparture &&
-      ABDB.AirlineFlightDeparture.airlineID === "GA"
-      ? true
-      : false
-  );
-  const [BaggageTotalPrice, setBaggageTotalPrice] = useState(null);
   const [hiddenDetailPrice, setHiddenDetailPrice] = useState(true);
   const [hiddenDetailPriceChevronUp, setHiddenDetailPriceChevronUp] =
     useState(false);
   const [hiddenDetailPriceChevronDown, setHiddenDetailPriceChevronDown] =
     useState(true);
+  const [PaymentMethodSelected, setPaymentMethodSelected] = useState<any>(null);
+  const [TimeLimit, setTimeLimit] = useState<string>("");
+  const [BaggageTotalPrice, setBaggageTotalPrice] = useState<any>(null);
+
+  const [showLoading, setShowLoading] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [headerAlert, setHeaderAlert] = useState<string>();
+  const [messageAlert, setMessageAlert] = useState<string>();
+
+  const failedAlert = (errorMessage: string) => {
+    setShowLoading(false);
+    setHeaderAlert("Gagal");
+    setMessageAlert(errorMessage);
+    setShowAlert(true);
+  };
   const seeDetailPrice = () => {
     setHiddenDetailPrice(false);
     setHiddenDetailPriceChevronUp(true);
@@ -111,203 +88,154 @@ const Order: React.FC<OrderProps> = ({
     setHiddenDetailPriceChevronDown(true);
   };
   useIonViewDidEnter(() => {
+    bookDetail();
     loadAirlineBookingDataBundleData();
+    const btp = localStorage.getItem("AirlineBaggageTotalPrice");
+    setBaggageTotalPrice(btp ? parseInt(btp) : 0);
   });
-  useEffect(() => {
-    if (!UseLionOrBatik) {
-      setUseLionOrBatik(
-        (ABDB &&
-          ABDB.AirlineFlightArrival &&
-          ABDB.AirlineFlightArrival.airlineID === "JT") ||
-          (ABDB &&
-            ABDB.AirlineFlightArrival &&
-            ABDB.AirlineFlightArrival.airlineID === "ID")
-          ? true
-          : false
-      );
-    }
-  }, [UseLionOrBatik]);
-  useEffect(() => {
-    if (!UseGaruda) {
-      setUseGaruda(
-        ABDB &&
-          ABDB.AirlineFlightDeparture &&
-          ABDB.AirlineFlightDeparture.airlineID === "GA"
-          ? true
-          : false
-      );
-    }
-  }, [UseGaruda]);
-  const calculateBaggageAirlineTotal = (t) => {
-    setBaggageTotalPrice(t);
-  };
-  const AOPDCheck = () => {
-    let count = 0;
-    AOPD.forEach((i) => {
-      if (i.PaxFirstName !== "") {
-        count = count + 1;
-      }
+  const bookDetail = () => {
+    setShowLoading(true);
+    var MyHeaders = {
+      appid: AppId,
+      "Content-Type": "application/json",
+      RequestVerificationToken: UserData.requestVerificationToken,
+    };
+    var MyData = JSON.stringify({
+      Id: localStorage.getItem("AirlineBookingId"),
+      accToken: UserData.accessToken,
     });
-    if (count >= AOPD.length) {
-      return true;
+    if (isPlatform("cordova")) {
+      HTTP.setDataSerializer("json");
+      HTTP.post(
+        MainUrl + "Member/AirlineBookingDetail",
+        JSON.parse(MyData),
+        MyHeaders
+      )
+        .then((res) => {
+          if (res.status !== 200) {
+            failedAlert("Periksa Koneksi anda");
+          }
+          return JSON.parse(res.data);
+        })
+        .then((res) => {
+          BookDetailSuccess(res);
+        })
+        .catch((err) => {
+          failedAlert(JSON.stringify(err));
+        });
     } else {
+      fetch(MainUrl + "Member/AirlineBookingDetail", {
+        method: "POST",
+        headers: MyHeaders,
+        body: MyData,
+      })
+        .then((r) => {
+          if (r.ok) {
+            return r.json();
+          } else {
+            failedAlert("Periksa Koneksi Anda");
+          }
+        })
+        .then((res) => {
+          BookDetailSuccess(res);
+        })
+        .catch((err) => {
+          failedAlert("Periksa Koneksi Internet");
+        });
+    }
+  };
+  const submitPayment = () => {
+    setShowLoading(true);
+    if (PaymentMethodSelected === null) {
+      failedAlert("Pilih metode pembayaran terlebih dahulu");
       return false;
     }
-  };
-  const submitBooking = () => {
-    const AOBS = JSON.parse(localStorage.AirlineOrderBaggageSelected);
-    const AOOP = JSON.parse(localStorage.AirlineOrderOrderPerson);
-    setShowLoading(true);
-    if (AOPDCheck()) {
-      let PaxDetailArray = new Array();
-      AOPD.forEach((PaxDetail, indexItem) => {
-        const PaxType =
-          PaxDetail.PaxType === "Adult"
-            ? 0
-            : PaxDetail.PaxType === "Child"
-            ? 1
-            : PaxDetail.PaxType === "Infant"
-            ? 2
-            : 0;
-        let PaxAddOnsDeparture =
-          PaxType === 2
-            ? { baggageDetailString: "", baggageString: "" }
-            : {
-                aoOrigin: ABDB.PreBookingData.SchDeparts[0].schOrigin,
-                aoDestination: ABDB.PreBookingData.SchDeparts[0].schDestination,
-                baggageDetailString:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].desc) || "",
-                baggageString:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].code) || "",
-                baggagePrice:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].fare) || 0,
-                meals: null,
-                mealsDetail: null,
-                mealsPrice: null,
-              };
-        let PaxAddOnsArrival = ABDB.PreBookingData.SchReturns
-          ? PaxType === 2
-            ? { baggageDetailString: "", baggageString: "" }
-            : {
-                aoOrigin: ABDB.PreBookingData.SchReturns[0].schOrigin,
-                aoDestination: ABDB.PreBookingData.SchReturns[0].schDestination,
-                baggageDetailString:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].desc) || "",
-                baggageString:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].code) || "",
-                baggagePrice:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].fare) || 0,
-                meals: null,
-                mealsDetail: null,
-                mealsPrice: null,
-              }
-          : null;
-        let PaxAddOns = ABDB.PreBookingData.SchReturns
-          ? [PaxAddOnsDeparture, PaxAddOnsArrival]
-          : [PaxAddOnsDeparture];
-        // if (AOBS[0][indexItem]) {
-        //   PaxAddOns[0] = AOBS[0][indexItem]||'asd';
-        //   if (AOBS[1][indexItem]) {
-        //     PaxAddOns.push(AOBS[1][indexItem]||{});
-        //   }
-        // }
-        const tempdata = {
-          IDNumber: null,
-          addOns: PaxAddOns,
-          batikMilesNo: null,
-          birthCountry: PaxDetail.PaxBirthCountry,
-          birthDate: new Date(PaxDetail.PaxBirthDate).toISOString(),
-          firstName: PaxDetail.PaxFirstName,
-          gender: PaxDetail.PaxGender,
-          lastName: PaxDetail.PaxLastName,
-          nationality: PaxDetail.PaxNationality,
-          parent: PaxDetail.PaxParent,
-          passportExpiredDate:
-            PaxDetail.PaxPassportExpiredDate === ""
-              ? null
-              : PaxDetail.PaxPassportExpiredDate,
-          passportIssuedCountry:
-            PaxDetail.PaxPassportIssuedCountry === ""
-              ? null
-              : PaxDetail.PaxPassportIssuedCountry,
-          passportIssuedDate:
-            PaxDetail.PaxPassportIssuedDate === ""
-              ? null
-              : PaxDetail.PaxPassportIssuedDate,
-          passportNumber:
-            PaxDetail.PaxPassportNumber === ""
-              ? null
-              : PaxDetail.PaxPassportNumber,
-          garudaFrequentFlyer:
-            PaxDetail.PaxGarudaFrequentFlyer === ""
-              ? null
-              : PaxDetail.PaxGarudaFrequentFlyer,
-          title: PaxDetail.PaxTitle,
-          type: PaxType,
-        };
-        PaxDetailArray.push(tempdata);
-      });
-      var MyHeaders = {
-        appid: AppId,
-        "Content-Type": "application/json",
-        RequestVerificationToken: UserData.requestVerificationToken,
-      };
-      var MyData = JSON.stringify({
-        PaxDetail: PaxDetailArray,
-        XTKN: ABDB.PreBookingData.XTKN,
-        accToken: UserData.accessToken,
-      });
-      if (isPlatform("cordova")) {
-        HTTP.setDataSerializer("json");
-        HTTP.post(MainUrl + "Airline/Booking", JSON.parse(MyData), MyHeaders)
-          .then((res) => {
-            if (res.status !== 200) {
-              alert("Periksa Koneksi anda");
-            }
-            return JSON.parse(res.data);
-          })
-          .then((res) => {
-            BookingSuccess(res);
-          })
-          .catch((err) => {
-            failedAlert(JSON.stringify(err));
-          });
-      } else {
-        fetch(MainUrl + "Airline/Booking", {
-          method: "POST",
-          headers: MyHeaders,
-          body: MyData,
+    var MyHeaders = {
+      appid: AppId,
+      "Content-Type": "application/json",
+      RequestVerificationToken: UserData.requestVerificationToken,
+    };
+    var MyData = JSON.stringify({
+      product_category: "flightTicket",
+      payment_method: PaymentMethodSelected.Code,
+      id_order: localStorage.getItem("AirlineTransactionID"),
+      accToken: UserData.accessToken,
+    });
+    if (isPlatform("cordova")) {
+      HTTP.setDataSerializer("json");
+      HTTP.post(
+        MainUrl + "Payment/paymentProceed",
+        JSON.parse(MyData),
+        MyHeaders
+      )
+        .then((res) => {
+          if (res.status !== 200) {
+            failedAlert("Periksa Koneksi anda");
+          }
+          return JSON.parse(res.data);
         })
-          .then((r) => {
-            if (r.ok) {
-              return r.json();
-            } else {
-              failedAlert("Periksa Koneksi Anda");
-            }
-          })
-          .then((res) => {
-            BookingSuccess(res);
-          })
-          .catch((err) => {
-            failedAlert("Periksa Koneksi Internet");
-          });
-      }
+        .then((res) => {
+          SubmitSuccess(res);
+        })
+        .catch((err) => {
+          failedAlert(JSON.stringify(err));
+        });
     } else {
-      failedAlert("Mohon Lengkapi Data terlebih dahulu");
+      fetch(MainUrl + "Payment/paymentProceed", {
+        method: "POST",
+        headers: MyHeaders,
+        body: MyData,
+      })
+        .then((r) => {
+          if (r.ok) {
+            return r.json();
+          } else {
+            failedAlert("Periksa Koneksi Anda");
+          }
+        })
+        .then((res) => {
+          SubmitSuccess(res);
+        })
+        .catch((err) => {
+          failedAlert("Periksa Koneksi Internet");
+        });
     }
   };
-  const BookingSuccess = (res) => {
-    if (res.Data && res.Data.RespStatus === "OK") {
+  const SubmitSuccess = (res) => {
+    if (res.StatusCode === 200) {
       setShowLoading(false);
-      localStorage.setItem("AirlineBookingId", res.Data.Id);
-      localStorage.setItem(
-        "AirlineBaggageTotalPrice",
-        (BaggageTotalPrice || 0).toString()
-      );
-      history.push("/airlinePayment");
+      localStorage.setItem("AirlineLastIdOrder", res.Data.id_order);
+      history.push("/airlineComplete");
     } else {
-      failedAlert(res.ErrorMessage);
+      failedAlert("Ada Masalah Koneksi");
     }
+  };
+  const BookDetailSuccess = (res) => {
+    setShowLoading(false);
+    createTimeLimit(res.PaymentLimit);
+    localStorage.setItem("AirlineTransactionID", res.TransactionID);
+  };
+  const createTimeLimit = (PaymentLimit) => {
+    const BookingTimeLimit = new Date(PaymentLimit).getTime();
+    const x = setInterval(function () {
+      const now = new Date().getTime();
+      const distance = BookingTimeLimit - now;
+      // const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      // const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      // Display the result in the element with id="demo"
+      setTimeLimit(`${hours} jam ${minutes} menit`);
+      // If the count down is finished, write some text
+      if (distance < 0) {
+        clearInterval(x);
+        setTimeLimit(`Expired`);
+      }
+    }, 1000);
+    setShowLoading(false);
   };
   return (
     <IonPage>
@@ -315,48 +243,37 @@ const Order: React.FC<OrderProps> = ({
       <IonHeader>
         <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/airlineFlightInformation"></IonBackButton>
+            <IonBackButton defaultHref="/airlineSearch"></IonBackButton>
           </IonButtons>
-          <IonTitle>Data Pesanan</IonTitle>
+          <IonTitle>Konfirmasi Pembayaran</IonTitle>
         </IonToolbar>
-        <AirlineWizard WizardIndex={1}></AirlineWizard>
+        <AirlineWizard WizardIndex={2}></AirlineWizard>
       </IonHeader>
       <IonContent fullscreen={true} className="AirlineOrder">
-        {/* Login As */}
-        <IonGrid className="white-bg ion-padding ion-margin-bottom">
+        <IonGrid className="orange-bg ion-padding ion-margin-bottom timer">
           <IonRow>
             <IonCol size="2" className="avatar">
-              <img src={UserData.photo || DefaultAva} alt="" />
+              <IonIcon icon={timeOutline} size="large" color="light"></IonIcon>
             </IonCol>
             <IonCol>
               <div>
-                <IonText>
-                  <p className="ion-no-margin">Login sebagai {UserData.name}</p>
-                </IonText>
-                <IonText color="medium">
-                  <p className="ion-no-margin"> {UserData.email}</p>
+                <IonText color="light">
+                  <p>
+                    <small>Selesaikan pembayaran dalam {TimeLimit}</small>
+                    {/* <small>Selesaikan pembayaran dalam {"5 menit"}</small> */}
+                  </p>
                 </IonText>
               </div>
             </IonCol>
           </IonRow>
         </IonGrid>
-        <AirlineOrderOrderPerson
-          name={UserData.name}
-          email={UserData.email}
-        ></AirlineOrderOrderPerson>
-        <AirlineOrderBuyerData
-          UseLionOrBatik={UseLionOrBatik}
-          UseGaruda={UseGaruda}
-        ></AirlineOrderBuyerData>
-        <AirlineOrderBaggage
-          AOPB={AOPB}
-          calculateBaggageAirlineTotal={(t) => {
-            calculateBaggageAirlineTotal(t);
+        <AirlinePaymentChoosePayment
+          UserData={UserData}
+          setPaymentMethodSelected={(e: any) => {
+            setPaymentMethodSelected(e);
           }}
-          // TourProductAddOnList={TourProductDetail.TourProductAddOnList}
-          // TourBookingPriceTotal={TourBookingPriceTotal}
-          // SetAddOnPrice={setAddOnPrice}
-        ></AirlineOrderBaggage>
+        ></AirlinePaymentChoosePayment>
+        {/* <AirlinePaymentVoucherCode></AirlinePaymentVoucherCode> */}
       </IonContent>
 
       <IonFooter>
@@ -370,7 +287,13 @@ const Order: React.FC<OrderProps> = ({
                 <IonText>
                   <h5 className="ion-no-margin">
                     {ABDB && ABDB.PriceData
-                      ? rupiah(ABDB.PriceData.SumFare + BaggageTotalPrice)
+                      ? rupiah(
+                          ABDB.PriceData.SumFare +
+                            BaggageTotalPrice +
+                            ((PaymentMethodSelected &&
+                              PaymentMethodSelected.Fee) ||
+                              0)
+                        )
                       : "Rp 0"}
                     {/* {Price !== null ? rupiah(Price || 0) : "Rp 0"} */}
                     <IonIcon
@@ -533,6 +456,16 @@ const Order: React.FC<OrderProps> = ({
                   {rupiah(BaggageTotalPrice || 0)}
                 </IonText>
               </IonCol>
+              <IonCol size="6">
+                <IonText color="medium">Admin Fee</IonText>
+              </IonCol>
+              <IonCol size="6" className="ion-text-right">
+                <IonText color="medium">
+                  {rupiah(
+                    (PaymentMethodSelected && PaymentMethodSelected.Fee) || 0
+                  )}
+                </IonText>
+              </IonCol>
               {/* <IonCol
                 size="12"
                 hidden={
@@ -542,15 +475,14 @@ const Order: React.FC<OrderProps> = ({
                 <IonText color="medium">Pulang</IonText>
               </IonCol> */}
             </IonRow>
-          </IonGrid>
-          <IonGrid>
             <IonRow>
               <IonCol>
                 <IonButton
                   className="text-transform-none"
                   size="large"
                   expand="block"
-                  onClick={() => submitBooking()}
+                  // onClick={() => Pay()}
+                  onClick={() => submitPayment()}
                 >
                   Bayar
                 </IonButton>
@@ -574,12 +506,9 @@ export default connect<{}, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
     UserData: selectors.getUserData(state),
     ABDB: state.airline.AirlineBookingDataBundle,
-    AOPD: state.airline.AirlineOrderPassengersData,
-    AOPB: state.airline.AirlineOrderPassengersBaggage,
   }),
   mapDispatchToProps: {
     loadAirlineBookingDataBundleData,
-    loadAirlineOrderPassengersBaggage,
   },
   component: React.memo(withRouter(Order)),
 });

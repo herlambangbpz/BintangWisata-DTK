@@ -4,6 +4,7 @@ import { userReducer } from "./user/user.reducer";
 import { profileReducer } from "./profile/profile.reducer";
 import { tourReducer } from "./tour/tour.reducer";
 import { airlineReducer } from "./airline/airline.reducer";
+import { hotelReducer } from "./hotel/hotel.reducer";
 var datenow = new Date();
 var datetomorrow = new Date();
 datetomorrow.setDate(datetomorrow.getDate() + 1);
@@ -37,6 +38,7 @@ export const initialState: AppState = {
     AirlineBookingNumberOfInfant: 0,
     AirlineBookingNumberOfPaxTotal: 1,
   },
+  hotel: {},
 };
 
 export const reducers = combineReducers({
@@ -45,6 +47,7 @@ export const reducers = combineReducers({
   profile: profileReducer,
   tour: tourReducer,
   airline: airlineReducer,
+  hotel: hotelReducer,
 });
 
 export type AppState = ReturnType<typeof reducers>;

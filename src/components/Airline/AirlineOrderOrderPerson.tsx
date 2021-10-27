@@ -199,9 +199,12 @@ export default function AirlineOrderOrderPerson({
                     placeholder="Select One"
                     onIonChange={(e) => setOrderPersonTitel(e.detail.value)}
                   >
-                    <IonSelectOption value="Mr">Tuan</IonSelectOption>
-                    <IonSelectOption value="Mrs">Nyonya</IonSelectOption>
-                    <IonSelectOption value="Ms">Nona</IonSelectOption>
+                    <IonSelectOption value="MR">Mr (Male)</IonSelectOption>
+                    <IonSelectOption value="MS">Ms (Female)</IonSelectOption>
+                    <IonSelectOption value="MISS">
+                      Miss (Female)
+                    </IonSelectOption>
+                    <IonSelectOption value="MSTR">Mstr (Male)</IonSelectOption>
                   </IonSelect>
                 </IonItem>
               </IonCol>

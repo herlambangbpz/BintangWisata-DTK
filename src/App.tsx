@@ -76,6 +76,13 @@ import AirlineOrder from "./pages/Airline/Order";
 import AirlinePayment from "./pages/Airline/Payment";
 import AirlineComplete from "./pages/Airline/Complete";
 
+import HotelSearch from "./pages/Hotel/Search";
+import HotelSearchResullt from "./pages/Hotel/SearchResult";
+import HotelDetail from "./pages/Hotel/Detail";
+import HotelOrder from "./pages/Hotel/Order";
+import HotelPayment from "./pages/Hotel/Payment";
+import HotelComplete from "./pages/Hotel/Complete";
+
 import TransactionHistoryList from "./pages/Transaction/HistoryList";
 import TransactionHistoryDetail from "./pages/Transaction/HistoryDetail";
 import TransactionHistoryDetailFlightticket from "./pages/Transaction/HistoryDetailFlightticket";
@@ -250,6 +257,13 @@ const VirtualTravelApp: React.FC<VirtualTravelAppProps> = ({
             <Route path="/airlineOrder" component={AirlineOrder} />
             <Route path="/airlinePayment" component={AirlinePayment} />
             <Route path="/airlineComplete" component={AirlineComplete} />
+            {/*Hotel*/}
+            <Route path="/hotelSearch" component={HotelSearch} />
+            <Route path="/hotelSearchResullt" component={HotelSearchResullt} />
+            <Route path="/otelDetail" component={HotelDetail} />
+            <Route path="/hotelOrder" component={HotelOrder} />
+            <Route path="/hotelPayment" component={HotelPayment} />
+            <Route path="/hotelComplete" component={HotelComplete} />
             {/*Ecommerce*/}
             {/* <Route path="/ecommerce" component={Ecommerce} />
             <Route path="/tourSearch" component={EcommerceSearch} />

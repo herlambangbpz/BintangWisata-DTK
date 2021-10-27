@@ -282,7 +282,7 @@ const AirlineOrderBaggage: React.FC<AirlineOrderBaggageProps> = ({
             birthCountry: PaxDetail.PaxBirthCountry,
             birthDate: new Date(PaxDetail.PaxBirthDate).toISOString(),
             firstName: PaxDetail.PaxFirstName,
-            garudaFrequentFlyer: null,
+            garudaFrequentFlyer: PaxDetail.PaxGarudaFrequentFlyer,
             gender: PaxDetail.PaxGender,
             lastName: PaxDetail.PaxLastName,
             nationality: PaxDetail.PaxNationality,

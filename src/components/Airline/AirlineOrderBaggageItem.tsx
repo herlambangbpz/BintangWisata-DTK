@@ -126,6 +126,9 @@ const AirlineOrderBaggageItem: React.FC<AirlineOrderBaggageItemProps> = ({
   const [PaxPassportNumber, setPaxPassportNumber] = useState(
     item.PaxPassportNumber
   );
+  const [PaxGarudaFrequentFlyer, setPaxGarudaFrequentFlyer] = useState(
+    item.PaxGarudaFrequentFlyer
+  );
   const [PaxTitle, setPaxTitle] = useState(item.PaxTitle);
   const [CountryList, setCountryList] = useState<any>(null);
   useIonViewDidEnter(() => {
@@ -140,6 +143,7 @@ const AirlineOrderBaggageItem: React.FC<AirlineOrderBaggageItemProps> = ({
     setPaxPassportIssuedCountry(item.PaxPassportIssuedCountry);
     setPaxPassportIssuedDate(item.PaxPassportIssuedDate);
     setPaxPassportNumber(item.PaxPassportNumber);
+    setPaxGarudaFrequentFlyer(item.PaxGarudaFrequentFlyer);
     setPaxTitle(item.PaxTitle);
   });
   const PaxDataSubmit = () => {
@@ -183,7 +187,7 @@ const AirlineOrderBaggageItem: React.FC<AirlineOrderBaggageItemProps> = ({
       PaxBirthCountry: PaxBirthCountry,
       PaxBirthDate: PaxBirthDate,
       PaxFirstName: PaxFirstName,
-      PaxGarudaFrequentFlyer: null,
+      PaxGarudaFrequentFlyer: PaxGarudaFrequentFlyer,
       PaxGender: PaxGender,
       PaxLastName: PaxLastName,
       PaxNationality: PaxNationality,
@@ -211,6 +215,7 @@ const AirlineOrderBaggageItem: React.FC<AirlineOrderBaggageItemProps> = ({
     setPaxPassportIssuedCountry(item.PaxPassportIssuedCountry);
     setPaxPassportIssuedDate(item.PaxPassportIssuedDate);
     setPaxPassportNumber(item.PaxPassportNumber);
+    setPaxGarudaFrequentFlyer(item.PaxGarudaFrequentFlyer);
     setPaxTitle(item.PaxTitle);
     setModal(false);
   };

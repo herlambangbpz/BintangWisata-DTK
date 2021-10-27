@@ -281,7 +281,7 @@ const FlightInformation: React.FC<FlightInformationProps> = ({
         PaxBirthCountry: "ID",
         PaxBirthDate: new Date().toString(),
         PaxFirstName: "",
-        PaxGarudaFrequentFlyer: null,
+        PaxGarudaFrequentFlyer: "",
         PaxGender: "",
         PaxLastName: "",
         PaxNationality: "ID",
@@ -378,7 +378,7 @@ const FlightInformation: React.FC<FlightInformationProps> = ({
               <IonCol size="6" className="ion-text-right">
                 <IonText>
                   <h5 className="ion-no-margin">
-                    {ABDB && ABDB.PriceData
+                    {ABDB && ABDB.PriceData && ABDB.PriceData.SumFare
                       ? rupiah(ABDB.PriceData.SumFare)
                       : "Rp 0"}
                     {/* {Price !== null ? rupiah(Price || 0) : "Rp 0"} */}
@@ -437,6 +437,9 @@ const FlightInformation: React.FC<FlightInformationProps> = ({
                   {rupiah(
                     (ABDB &&
                       ABDB.AirlineBooking.AirlineBookingNumberOfAdult > 0 &&
+                      ABDB.PreBookingData &&
+                      ABDB.PreBookingData.PriceDetail &&
+                      ABDB.PreBookingData.PriceDetail.length > 0 &&
                       ABDB.PreBookingData.PriceDetail[0].totalFare) ||
                       "0"
                   )}
@@ -471,6 +474,9 @@ const FlightInformation: React.FC<FlightInformationProps> = ({
                   {rupiah(
                     (ABDB &&
                       ABDB.AirlineBooking.AirlineBookingNumberOfChild > 0 &&
+                      ABDB.PreBookingData &&
+                      ABDB.PreBookingData.PriceDetail &&
+                      ABDB.PreBookingData.PriceDetail.length > 0 &&
                       ABDB.PreBookingData.PriceDetail[1].totalFare) ||
                       "0"
                   )}
@@ -505,6 +511,9 @@ const FlightInformation: React.FC<FlightInformationProps> = ({
                   {rupiah(
                     (ABDB &&
                       ABDB.AirlineBooking.AirlineBookingNumberOfInfant > 0 &&
+                      ABDB.PreBookingData &&
+                      ABDB.PreBookingData.PriceDetail &&
+                      ABDB.PreBookingData.PriceDetail.length > 0 &&
                       ABDB.PreBookingData.PriceDetail[2].totalFare) ||
                       "0"
                   )}
@@ -527,6 +536,7 @@ const FlightInformation: React.FC<FlightInformationProps> = ({
                   className="text-transform-none"
                   size="large"
                   expand="block"
+                  disabled={!PriceUpdated}
                   onClick={() => submitFlight()}
                 >
                   Bayar

@@ -7,7 +7,7 @@
   {
     "label": "Hotel",
     "imagePath": "assets/icon/HotelIcon.svg",
-    "historyPush": ""
+    "historyPush": "/hotelSearch"
   },
   {
     "label": "Kapal Laut",

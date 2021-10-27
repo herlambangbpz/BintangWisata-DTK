@@ -22,7 +22,8 @@ import {
 } from "../../data/airline/airline.actions";
 
 interface OwnProps {
-  domesticTourType: boolean;
+  UseLionOrBatik: boolean;
+  UseGaruda: boolean;
 }
 interface StateProps {
   ABDB?: any;
@@ -39,7 +40,8 @@ interface AirlineOrderBuyerDataProps
     DispatchProps,
     RouteComponentProps {}
 const AirlineOrderBuyerData: React.FC<AirlineOrderBuyerDataProps> = ({
-  domesticTourType,
+  UseLionOrBatik,
+  UseGaruda,
   ABDB,
   loadAirlineBookingDataBundleData,
   loadAirlineOrderPassengersData,
@@ -177,7 +179,8 @@ const AirlineOrderBuyerData: React.FC<AirlineOrderBuyerDataProps> = ({
             indexItem={index}
             item={item}
             AOPD={AOPD}
-            domesticTourType={domesticTourType}
+            UseLionOrBatik={UseLionOrBatik}
+            UseGaruda={UseGaruda}
             PassengerTitle={PassengerTitle}
             key={index}
             Nationalities={Nationalities}
