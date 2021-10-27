@@ -347,7 +347,9 @@ const Search: React.FC<SearchProps> = ({
                 className="text-transform-none"
                 expand="block"
                 hidden={
-                  TransactionList !== null && TransactionList !== "pending"
+                  TransactionList !== null &&
+                  TransactionList !== "pending" &&
+                  TransactionList.length > 10
                     ? false
                     : true
                 }
