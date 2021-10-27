@@ -101,6 +101,8 @@ export const tourStatusName = (status: string) => {
     return "Issued ";
   } else if (status === "completed") {
     return "Pesanan Selesai";
+  } else if (status === "cancelled") {
+    return "Dibatalkan";
   } else if (status === "partnercancelled") {
     return "Dibatalkan Mitra";
   } else if (status === "consumercancelled") {
@@ -130,6 +132,8 @@ export const tourStatusColor = (status: string) => {
     return "success";
   } else if (status === "completed") {
     return "success";
+  } else if (status === "cancelled") {
+    return "danger";
   } else if (status === "partnercancelled") {
     return "danger";
   } else if (status === "consumercancelled") {
@@ -159,6 +163,8 @@ export const tourCtaLabel = (status: string) => {
     return "Lihat E-Voucher ";
   } else if (status === "completed") {
     return "Kirim Bukti Pembayaran";
+  } else if (status === "cancelled") {
+    return "Transaksi Kembali";
   } else if (status === "partnercancelled") {
     return "Transaksi Kembali";
   } else if (status === "consumercancelled") {
@@ -187,6 +193,8 @@ export const tourCtaTarget = (status: string) => {
     return "/evoucher";
   } else if (status === "completed") {
     return "/evoucher";
+  } else if (status === "cancelled") {
+    return "/main/index";
   } else if (status === "partnercancelled") {
     return "/main/index";
   } else if (status === "consumercancelled") {
