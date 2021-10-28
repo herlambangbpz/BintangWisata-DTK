@@ -112,6 +112,7 @@ const Order: React.FC<OrderProps> = ({
   };
   useIonViewDidEnter(() => {
     loadAirlineBookingDataBundleData();
+    loadAirlineOrderPassengersBaggage();
   });
   useEffect(() => {
     if (!UseLionOrBatik) {
