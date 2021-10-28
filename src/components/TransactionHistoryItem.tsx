@@ -76,7 +76,12 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
           onClick={() => TransactionHistoryDetail(TransactionID)}
         >
           <IonCol size="8">
-            <IonText color="medium">No. Pesanan: {TransactionCode}</IonText>
+            <IonText color="medium">
+              {ProductCategory === "FlightTicket"
+                ? "Kode Booking"
+                : "No. Pesanan :"}{" "}
+              {TransactionCode}
+            </IonText>
           </IonCol>
           <IonCol size="4" className="ion-text-right">
             <IonText color="dark">{rupiah(Price)}</IonText>

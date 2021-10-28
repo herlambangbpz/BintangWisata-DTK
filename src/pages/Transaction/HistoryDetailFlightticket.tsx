@@ -297,7 +297,7 @@ const HistoryDetailFlightticket: React.FC<HistoryDetailFlightticketProps> = ({
               <IonCol size="12">
                 <p color="medium">
                   <small>
-                    Customer service kami akan menanyakan No. Pesanan tersebut
+                    Customer service kami akan menanyakan Kode Booking tersebut
                     saat Anda menghubungi kami
                   </small>
                 </p>
