@@ -30,7 +30,7 @@ import { AppId, MainUrl } from "../../AppConfig";
 import "./HistoryDetailFlightticket.scss";
 import { getHistoryTransactionIcon } from "../../helpers/HistoryTransaction";
 import { cSharpDateHourCovert } from "../../helpers/datetime";
-import { AppName } from "../../AppConfig";
+import { AppName, ContactUsLink } from "../../AppConfig";
 interface OwnProps {}
 interface StateProps {
   UserData: any;
@@ -157,7 +157,7 @@ const HistoryDetailFlightticket: React.FC<HistoryDetailFlightticketProps> = ({
               {TransactionHistoryDetail.Destination}
             </IonTitle>
             <IonTitle className="ion-sub-title ion-no-padding">
-              No. Pesanan: {TransactionHistoryDetail.BookingCode}
+              Kode Booking : {TransactionHistoryDetail.BookingCode}
             </IonTitle>
           </IonToolbar>
         </IonHeader>
@@ -193,10 +193,18 @@ const HistoryDetailFlightticket: React.FC<HistoryDetailFlightticketProps> = ({
                 </IonText>
                 <br />
                 <IonText color="medium">
+                  <small>{TransactionHistoryDetail.Airline}</small>
+                </IonText>
+                <br />
+                <IonText color="medium">
                   <small>
-                    {TransactionHistoryDetail.Airline +
-                      " - " +
-                      cSharpDateHourCovert(TransactionHistoryDetail.DepartDate)}
+                    {cSharpDateHourCovert(TransactionHistoryDetail.Departetd)}
+                  </small>
+                </IonText>
+                <br />
+                <IonText color="medium">
+                  <small>
+                    {cSharpDateHourCovert(TransactionHistoryDetail.Departeta)}
                   </small>
                 </IonText>
               </IonCol>
@@ -281,7 +289,9 @@ const HistoryDetailFlightticket: React.FC<HistoryDetailFlightticketProps> = ({
             <IonRow className="ion-align-items-center">
               <IonCol size="12">
                 <IonText>
-                  <small>No. Pesanan</small>
+                  <small>
+                    Kode Booking {TransactionHistoryDetail.BookingCode}
+                  </small>
                 </IonText>
               </IonCol>
               <IonCol size="12">
@@ -294,7 +304,9 @@ const HistoryDetailFlightticket: React.FC<HistoryDetailFlightticketProps> = ({
               </IonCol>
               <IonCol size="12">
                 <IonText color="primary">
-                  <b>HUBUNGI KAMI</b>
+                  <a href={ContactUsLink}>
+                    <b>HUBUNGI KAMI</b>
+                  </a>
                 </IonText>
               </IonCol>
             </IonRow>
