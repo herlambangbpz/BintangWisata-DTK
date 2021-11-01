@@ -78,8 +78,8 @@ const TransactionHistoryItem: React.FC<TransactionHistoryItemProps> = ({
           <IonCol size="8">
             <IonText color="medium">
               {ProductCategory === "FlightTicket"
-                ? "Kode Booking"
-                : "No. Pesanan :"}{" "}
+                ? "Kode Booking : "
+                : "No. Pesanan : "}
               {TransactionCode}
             </IonText>
           </IonCol>

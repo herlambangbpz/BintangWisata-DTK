@@ -92,7 +92,7 @@ const AirlineOrderBaggageItem: React.FC<AirlineOrderBaggageItemProps> = ({
     let AOPBTemp = AOPB;
     const getBaggage =
       BaggageData[indexBaggage || 0].baggageInfos.filter(
-        (b) => b.code === val
+        (b) => b.desc === val
       )[0] || null;
 
     if (AOPBTemp && getBaggage) {
@@ -266,14 +266,14 @@ const AirlineOrderBaggageItem: React.FC<AirlineOrderBaggageItemProps> = ({
               // ""
               // "PBAA"
               dv && dv[indexItem] !== null
-                ? dv[indexItem].code
+                ? dv[indexItem].desc
                 : BaggageData !== null &&
                   BaggageData[indexBaggage].baggageInfos.sort(
                     (a, b) => a.fare - b.fare
                   )[0]
                 ? BaggageData[indexBaggage].baggageInfos.sort(
                     (a, b) => a.fare - b.fare
-                  )[0].code
+                  )[0].desc
                 : ""
               // dvs && dvs.code
               //   ? dvs && dvs.code
@@ -292,9 +292,9 @@ const AirlineOrderBaggageItem: React.FC<AirlineOrderBaggageItemProps> = ({
               bd[0].baggageInfos
                 .sort((a, b) => a.fare - b.fare)
                 .map((baggageitem, index) => (
-                  <Radio.Button value={baggageitem.code} key={index}>
-                    {baggageitem.desc.split(" - ")[1]} :{" "}
-                    {rupiah(baggageitem.fare)}
+                  <Radio.Button value={baggageitem.desc} key={index}>
+                    {/* {baggageitem.desc.split(" - ")[1]} :{" "} */}
+                    {baggageitem.desc} - {rupiah(baggageitem.fare)}
                   </Radio.Button>
                 ))) ||
               ""}

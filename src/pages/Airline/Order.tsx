@@ -25,7 +25,7 @@ import React, { useEffect, useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
 import { connect } from "../../data/connect";
 import * as selectors from "../../data/selectors";
-import { setTourPaymentAllowStatus } from "../../data/tour/tour.actions";
+import { logoutUser } from "../../data/user/user.actions";
 import "./Order.scss";
 import { Collapse } from "antd";
 import { DefaultAva } from "../../AppConfig";
@@ -50,6 +50,7 @@ interface StateProps {
 }
 interface DispatchProps {
   // setTourPaymentAllowStatus: typeof setTourPaymentAllowStatus;
+  logoutUser: typeof logoutUser;
   loadAirlineBookingDataBundleData: typeof loadAirlineBookingDataBundleData;
   loadAirlineOrderPassengersBaggage: typeof loadAirlineOrderPassengersBaggage;
 }
@@ -64,6 +65,7 @@ const Order: React.FC<OrderProps> = ({
   ABDB,
   AOPD,
   AOPB,
+  logoutUser,
   loadAirlineBookingDataBundleData,
   loadAirlineOrderPassengersBaggage,
 }) => {
@@ -155,6 +157,9 @@ const Order: React.FC<OrderProps> = ({
       return false;
     }
   };
+  const logout = async () => {
+    logoutUser();
+  };
   const submitBooking = () => {
     const AOBS = JSON.parse(localStorage.AirlineOrderBaggageSelected);
     const AOOP = JSON.parse(localStorage.AirlineOrderOrderPerson);
@@ -193,11 +198,11 @@ const Order: React.FC<OrderProps> = ({
                 aoOrigin: ABDB.PreBookingData.SchReturns[0].schOrigin,
                 aoDestination: ABDB.PreBookingData.SchReturns[0].schDestination,
                 baggageDetailString:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].desc) || "",
+                  (AOBS[1][indexItem] && AOBS[1][indexItem].desc) || "",
                 baggageString:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].code) || "",
+                  (AOBS[1][indexItem] && AOBS[1][indexItem].code) || "",
                 baggagePrice:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].fare) || 0,
+                  (AOBS[1][indexItem] && AOBS[1][indexItem].fare) || 0,
                 meals: null,
                 mealsDetail: null,
                 mealsPrice: null,
@@ -263,6 +268,12 @@ const Order: React.FC<OrderProps> = ({
         HTTP.post(MainUrl + "Airline/Booking", JSON.parse(MyData), MyHeaders)
           .then((res) => {
             if (res.status !== 200) {
+              if (res.status === 401) {
+                failedAlert(
+                  "Session anda telah berakhir, lakukan login ulang terlebih dahulu"
+                );
+                logout();
+              }
               alert("Periksa Koneksi anda");
             }
             return JSON.parse(res.data);
@@ -283,6 +294,12 @@ const Order: React.FC<OrderProps> = ({
             if (r.ok) {
               return r.json();
             } else {
+              if (r.status === 401) {
+                failedAlert(
+                  "Session anda telah berakhir, lakukan login ulang terlebih dahulu"
+                );
+                logout();
+              }
               failedAlert("Periksa Koneksi Anda");
             }
           })
@@ -579,6 +596,7 @@ export default connect<{}, StateProps, DispatchProps>({
     AOPB: state.airline.AirlineOrderPassengersBaggage,
   }),
   mapDispatchToProps: {
+    logoutUser,
     loadAirlineBookingDataBundleData,
     loadAirlineOrderPassengersBaggage,
   },

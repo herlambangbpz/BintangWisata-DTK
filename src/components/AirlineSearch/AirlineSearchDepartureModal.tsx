@@ -24,7 +24,7 @@ import {
 } from "../../data/airline/airline.actions";
 import { connect } from "../../data/connect";
 import DefaultToolbar from "../shared/DefaultToolbar";
-
+import { MainUrl } from "../../AppConfig";
 interface OwnProps {
   ShowModal: boolean;
   CloseModal: any;
@@ -90,15 +90,15 @@ const AirlineSearchDepartureModal: React.FC<AirlineSearchDepartureModalProps> =
       setAirlineBookingOriginDetail(undefined);
       setAirlineBookingDestination(undefined);
       setAirlineBookingDestinationDetail(undefined);
-
+      const OriginRouteApiUrl = MainUrl.toLocaleLowerCase().includes(
+        "localhost"
+      )
+        ? "https://m.dutatravel.net/api/" + "Airline/getOriginRoute"
+        : MainUrl + "Airline/getOriginRoute";
       if (isPlatform("cordova")) {
         HTTP.setDataSerializer("multipart");
         HTTP.setRequestTimeout(180);
-        HTTP.post(
-          "https://m.dutatravel.net/api/" + "Airline/getOriginRoute",
-          MyData,
-          {}
-        )
+        HTTP.post(OriginRouteApiUrl, MyData, {})
           .then((res) => {
             if (res.status !== 200) {
               alert("Periksa Koneksi anda");
@@ -116,7 +116,7 @@ const AirlineSearchDepartureModal: React.FC<AirlineSearchDepartureModalProps> =
             // failedAlert(JSON.stringify(err));
           });
       } else {
-        fetch("https://m.dutatravel.net/api/" + "Airline/getOriginRoute", {
+        fetch(OriginRouteApiUrl, {
           method: "POST",
           // headers: { AppId: AppId },
           body: MyData,
