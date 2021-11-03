@@ -2,11 +2,12 @@ import { IonCol, IonLabel, IonRow } from "@ionic/react";
 import React, { useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
 import { connect } from "../../data/connect";
-import AirlineSearchDepartureModal from "./AirlineSearchDepartureModal";
+import HotelSearchKeysModal from "./HotelSearchKeysModal";
 interface OwnProps {}
 interface StateProps {
   AirlineOriginRoutes?: any;
   AirlineBookingOriginDetail?: string;
+  HotelSearch?: any;
 }
 interface DispatchProps {}
 interface AirlineSearchFormDepartureProps
@@ -16,6 +17,7 @@ interface AirlineSearchFormDepartureProps
     RouteComponentProps {}
 const AirlineSearchFormDeparture: React.FC<AirlineSearchFormDepartureProps> = ({
   AirlineBookingOriginDetail,
+  HotelSearch,
 }) => {
   const [ShowModal, setShowModal] = useState(false);
   return (
@@ -27,26 +29,34 @@ const AirlineSearchFormDeparture: React.FC<AirlineSearchFormDepartureProps> = ({
           </IonLabel>
         </IonCol>
         <IonCol size="1">
-          <img src="assets/icon/MapPin.svg" alt="" />
+          <img
+            src={
+              HotelSearch && HotelSearch.Type !== "Kota"
+                ? "assets/icon/HotelRoomPrimary.svg"
+                : "assets/icon/MapPin.svg"
+            }
+            alt=""
+          />
         </IonCol>
         <IonCol>
           <IonLabel>
-            {AirlineBookingOriginDetail || "Kota Tujuan atau Nama Hotel"}
+            {(HotelSearch && HotelSearch.Name) || "Kota Tujuan atau Nama Hotel"}
           </IonLabel>
         </IonCol>
       </IonRow>
-      <AirlineSearchDepartureModal
+      <HotelSearchKeysModal
         ShowModal={ShowModal}
         CloseModal={() => {
           setShowModal(false);
         }}
-      ></AirlineSearchDepartureModal>
+      ></HotelSearchKeysModal>
     </div>
   );
 };
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
     AirlineBookingOriginDetail: state.airline.AirlineBookingOriginDetail,
+    HotelSearch: state.hotel.HotelSearch,
   }),
   // mapDispatchToProps: {
   //   setAirlineAirport,
