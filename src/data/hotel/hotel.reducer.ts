@@ -39,6 +39,12 @@ export const hotelReducer = (
         HotelSearchRoomType: action.HotelSearchRoomType,
       };
     }
+    case "set-hotel-search-results": {
+      return {
+        ...state,
+        HotelSearchResults: action.HotelSearchResults,
+      };
+    }
     //Hotel Details
     case "set-hotel-detail-hcode": {
       return {
@@ -59,10 +65,16 @@ export const hotelReducer = (
       };
     }
     //Hotel Order
-    case "set-hotel-order-guest-request-parameter": {
+    case "set-hotel-order-room-detail": {
       return {
         ...state,
-        HotelOrderGuestRequestParameter: action.HotelOrderGuestRequestParameter,
+        HotelOrderRoomDetail: action.HotelOrderRoomDetail,
+      };
+    }
+    case "set-hotel-order-guest": {
+      return {
+        ...state,
+        HotelOrderGuest: action.HotelOrderGuest,
       };
     }
     case "set-hotel-order-booking-paxes": {

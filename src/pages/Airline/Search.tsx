@@ -80,6 +80,11 @@ const Search: React.FC<SearchProps> = ({
     localStorage.removeItem("AirlineBookingId");
     localStorage.removeItem("AirlineLastIdOrder");
     localStorage.removeItem("AirlineTransactionID");
+    if (!UserData.accessToken) {
+      failedAlert("Login Terlebih Dahulu");
+      history.push("/login");
+      return;
+    }
     setShowLoading(true);
     var MyHeaders = {
       appid: AppId,
@@ -122,7 +127,12 @@ const Search: React.FC<SearchProps> = ({
       HTTP.post(MainUrl + "Airline/ScheduleAll", MyData, MyHeaders)
         .then((res) => {
           if (res.status !== 200) {
-            alert("Periksa Koneksi anda");
+            if (res.status === 401) {
+              failedAlert("Session telah habis, silahkan login ulang");
+              history.push("/login");
+            } else {
+              alert("Periksa Koneksi anda");
+            }
           }
           return JSON.parse(res.data);
         })
@@ -130,13 +140,8 @@ const Search: React.FC<SearchProps> = ({
           AirlineBookingSubmitSuccess(res);
         })
         .catch((err) => {
-          // if (err.status) {
-          //   failedAlert("Session telah habis, silahkan login ulang");
-
-          //   history.push("/login");
-          // } else {
-          failedAlert(JSON.stringify(err));
-          // }
+          failedAlert("Session telah habis, silahkan login ulang");
+          history.push("/login");
         });
     } else {
       fetch(MainUrl + "Airline/ScheduleAll", {
@@ -150,7 +155,6 @@ const Search: React.FC<SearchProps> = ({
           } else {
             if (r.status === 401) {
               failedAlert("Session telah habis, silahkan login ulang");
-
               history.push("/login");
             } else {
               failedAlert(r.statusText);

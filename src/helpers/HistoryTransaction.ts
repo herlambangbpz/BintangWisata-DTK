@@ -6,6 +6,8 @@ export const getHistoryTransactionStatusName = (
     return tourStatusName(status.toLowerCase());
   } else if (type.toLowerCase() === "flightticket") {
     return tourStatusName(status.toLowerCase());
+  } else if (type.toLowerCase() === "hotelbooking") {
+    return tourStatusName(status.toLowerCase());
   } else {
     return "Tidak Diketahui";
   }
@@ -17,6 +19,8 @@ export const getHistoryTransactionStatusColor = (
   if (type.toLowerCase() === "tour") {
     return tourStatusColor(status.toLowerCase());
   } else if (type.toLowerCase() === "flightticket") {
+    return tourStatusColor(status.toLowerCase());
+  } else if (type.toLowerCase() === "hotelbooking") {
     return tourStatusColor(status.toLowerCase());
   } else {
     return "danger";
@@ -48,7 +52,7 @@ export const getHistoryTransactionIcon = (type: string) => {
     return "assets/img/Services/Airplane.svg";
   } else if (type.toLowerCase() === "bus") {
     return "assets/img/Services/Bus.svg";
-  } else if (type.toLowerCase() === "hotel") {
+  } else if (type.toLowerCase() === "hotelbooking") {
     return "assets/img/Services/Hotel.svg";
   } else if (
     type.toLowerCase() === "ordertopup" ||
@@ -69,7 +73,7 @@ export const createTransactionDetailUrl = (PC: string, TID: string) => {
     return "/transactionHistoryDetailFlightticket/" + TID;
   } else if (PC.toLowerCase() === "bus") {
     return "/transactionHistoryDetailBus/" + TID;
-  } else if (PC.toLowerCase() === "hotel") {
+  } else if (PC.toLowerCase() === "hotelbooking") {
     return "/transactionHistoryDetailHotel/" + TID;
   } else if (
     PC.toLowerCase() === "ordertopup" ||

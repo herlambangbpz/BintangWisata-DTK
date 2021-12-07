@@ -29,7 +29,7 @@ import { connect } from "../../data/connect";
 import * as selectors from "../../data/selectors";
 import { setTourPaymentAllowStatus } from "../../data/tour/tour.actions";
 import "./Order.scss";
-import AirlineWizard from "../../components/Airline/AirlineWizard";
+import HotelWizard from "../../components/Hotel/HotelWizard";
 import { Collapse } from "antd";
 import { loadAirlineBookingDataBundleData } from "../../data/airline/airline.actions";
 import Lottie from "lottie-react";
@@ -62,9 +62,10 @@ const Order: React.FC<OrderProps> = ({
   const [hiddenDetailPriceChevronDown, setHiddenDetailPriceChevronDown] =
     useState(true);
   const [IdOrder, setIdOrder] = useState(
-    localStorage.getItem("AirlineLastIdOrder") || null
+    localStorage.getItem("HotelLastIdOrder") || null
   );
   const [dataOrder, setDataOrder] = useState<any>(null);
+  const [HotelPanelData, setHotelPanelData] = useState<any>(null);
   const [showLoading, setShowLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [headerAlert, setHeaderAlert] = useState<string>();
@@ -144,6 +145,14 @@ const Order: React.FC<OrderProps> = ({
   const getOrderDetailSuccess = (res) => {
     if (res.StatusCode === 200) {
       setDataOrder(res.Data);
+      setHotelPanelData({
+        HotelName: res.Data.bookDetail.hotelName || "",
+        HotelAddress: res.Data.bookDetail.hotelAddress || "",
+        CheckInDate: res.Data.bookDetail.checkInDate || "",
+        CheckOutDate: res.Data.bookDetail.checkOutDate || "",
+        RoomRequest: res.Data.bookDetail.roomRequest || "",
+        TotalPrice: res.Data.bookDetail.totalPrice || 0,
+      });
     } else {
       setDataOrder(null);
       failedAlert("Ada Masalah Koneksi");
@@ -159,7 +168,10 @@ const Order: React.FC<OrderProps> = ({
           </IonButtons>
           <IonTitle>Selesai</IonTitle>
         </IonToolbar>
-        <AirlineWizard WizardIndex={3}></AirlineWizard>
+        <HotelWizard
+          WizardIndex={3}
+          HotelPanelData={HotelPanelData}
+        ></HotelWizard>
       </IonHeader>
       <IonContent fullscreen={true} className="gray-bg">
         <IonGrid
@@ -167,13 +179,11 @@ const Order: React.FC<OrderProps> = ({
           hidden={dataOrder === null}
         >
           <IonRow>
-            <IonCol size="6">
-              <IonText>Kode Booking</IonText>
+            <IonCol size="4">
+              <IonText>Kode Pesanan</IonText>
             </IonCol>
-            <IonCol size="6" className="ion-text-right">
-              <IonText color="primary">
-                {(dataOrder !== null && dataOrder.BookingCode) || ""}
-              </IonText>
+            <IonCol size="8" className="ion-text-right">
+              <IonText color="primary">{IdOrder || ""}</IonText>
             </IonCol>
           </IonRow>
         </IonGrid>
@@ -297,14 +307,14 @@ const Order: React.FC<OrderProps> = ({
               </IonText>
             </IonCol>
             <IonCol size="6">
-              <IonText>Total Pajak</IonText>
+              <IonText>Total Pembayaran</IonText>
             </IonCol>
             <IonCol size="6" className="ion-text-right">
               <IonText>
                 {rupiah(
-                  (ABDB &&
-                    ABDB.PreBookingData &&
-                    ABDB.PreBookingData.TotalTax) ||
+                  (dataOrder &&
+                    dataOrder.paymentDetail &&
+                    dataOrder.paymentDetail.paymentAmount) ||
                     "0"
                 )}
               </IonText>

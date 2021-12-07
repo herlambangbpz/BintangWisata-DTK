@@ -129,95 +129,68 @@ const FlightInformation: React.FC<FlightInformationProps> = ({
     MyData.append("destinationDetail", AB.AirlineBookingDestinationDetail);
     MyData.append("journeyDepartReference", AFD.journeyReference);
     //departAirlineCodePreBook
-    if (AFD.segment.length > 1) {
-      MyData.append(
-        "departAirlineCodePreBook",
-        AFD.segment[0].flightDetail[0].airlineCode +
-          "~~" +
-          AFD.segment[1].flightDetail[0].airlineCode
-      );
-      MyData.append(
-        "departDepartTimeCode",
-        AFD.segment[0].flightDetail[0].fdDepartTime +
-          "~~" +
-          AFD.segment[1].flightDetail[0].fdDepartTime
-      );
-      MyData.append(
-        "departArrivalTimeCode",
-        AFD.segment[0].flightDetail[0].fdArrivalTime +
-          "~~" +
-          AFD.segment[1].flightDetail[0].fdArrivalTime
-      );
-      MyData.append(
-        "departFlightClassCode",
-        AFD.segment[0].availableDetail[0].flightClass +
-          "~~" +
-          AFD.segment[1].availableDetail[0].flightClass
-      );
-    } else {
-      MyData.append(
-        "departAirlineCodePreBook",
-        AFD.segment[0].flightDetail[0].airlineCode
-      );
-      MyData.append(
-        "departDepartTimeCode",
-        AFD.segment[0].flightDetail[0].fdDepartTime
-      );
-      MyData.append(
-        "departArrivalTimeCode",
-        AFD.segment[0].flightDetail[0].fdArrivalTime
-      );
-      MyData.append(
-        "departFlightClassCode",
-        AFD.segment[0].availableDetail[0].flightClass
-      );
-    }
-
+    let AirlineCode = "";
+    let FdDepartTime = "";
+    let FdArrivalTime = "";
+    let FlightClass = "";
+    AFD.segment.forEach((item, key) => {
+      AirlineCode =
+        AirlineCode +
+        (key > 0
+          ? "~~" + item.flightDetail[0].airlineCode
+          : item.flightDetail[0].airlineCode);
+      FdDepartTime =
+        FdDepartTime +
+        (key > 0
+          ? "~~" + item.flightDetail[0].fdDepartTime
+          : item.flightDetail[0].fdDepartTime);
+      FdArrivalTime =
+        FdArrivalTime +
+        (key > 0
+          ? "~~" + item.flightDetail[0].fdArrivalTime
+          : item.flightDetail[0].fdArrivalTime);
+      FlightClass =
+        FlightClass +
+        (key > 0
+          ? "~~" + item.availableDetail[0].flightClass
+          : item.availableDetail[0].flightClass);
+    });
+    MyData.append("departAirlineCodePreBook", AirlineCode);
+    MyData.append("departDepartTimeCode", FdDepartTime);
+    MyData.append("departArrivalTimeCode", FdArrivalTime);
+    MyData.append("departFlightClassCode", FlightClass);
     if (AFA) {
       MyData.append("journeyReturnReference", AFA.journeyReference);
-      if (AFA.segment.length > 1) {
-        MyData.append(
-          "returnAirlineCodePreBook",
-          AFA.segment[0].flightDetail[0].airlineCode +
-            "~~" +
-            AFA.segment[1].flightDetail[0].airlineCode
-        );
-        MyData.append(
-          "returnDepartTimeCode",
-          AFA.segment[0].flightDetail[0].fdDepartTime +
-            "~~" +
-            AFA.segment[1].flightDetail[0].fdDepartTime
-        );
-        MyData.append(
-          "returnArrivalTimeCode",
-          AFA.segment[0].flightDetail[0].fdArrivalTime +
-            "~~" +
-            AFA.segment[1].flightDetail[0].fdArrivalTime
-        );
-        MyData.append(
-          "returnFlightClassCode",
-          AFA.segment[0].availableDetail[0].flightClass +
-            "~~" +
-            AFA.segment[1].availableDetail[0].flightClass
-        );
-      } else {
-        MyData.append(
-          "returnAirlineCodePreBook",
-          AFA.segment[0].flightDetail[0].airlineCode
-        );
-        MyData.append(
-          "returnDepartTimeCode",
-          AFA.segment[0].flightDetail[0].fdDepartTime
-        );
-        MyData.append(
-          "returnArrivalTimeCode",
-          AFA.segment[0].flightDetail[0].fdArrivalTime
-        );
-        MyData.append(
-          "returnFlightClassCode",
-          AFA.segment[0].availableDetail[0].flightClass
-        );
-      }
+      AirlineCode = "";
+      FdDepartTime = "";
+      FdArrivalTime = "";
+      FlightClass = "";
+      AFA.segment.forEach((item, key) => {
+        AirlineCode =
+          AirlineCode +
+          (key > 0
+            ? "~~" + item.flightDetail[0].airlineCode
+            : item.flightDetail[0].airlineCode);
+        FdDepartTime =
+          FdDepartTime +
+          (key > 0
+            ? "~~" + item.flightDetail[0].fdDepartTime
+            : item.flightDetail[0].fdDepartTime);
+        FdArrivalTime =
+          FdArrivalTime +
+          (key > 0
+            ? "~~" + item.flightDetail[0].fdArrivalTime
+            : item.flightDetail[0].fdArrivalTime);
+        FlightClass =
+          FlightClass +
+          (key > 0
+            ? "~~" + item.availableDetail[0].flightClass
+            : item.availableDetail[0].flightClass);
+      });
+      MyData.append("returnAirlineCodePreBook", AirlineCode);
+      MyData.append("returnDepartTimeCode", FdDepartTime);
+      MyData.append("returnArrivalTimeCode", FdArrivalTime);
+      MyData.append("returnFlightClassCode", FlightClass);
     }
 
     MyData.append("airlineAccessCode", "");
@@ -296,7 +269,7 @@ const FlightInformation: React.FC<FlightInformationProps> = ({
             return JSON.parse(res.data);
           })
           .then((res) => {
-            getPriceSuccess(res, PBD);
+            getPriceSuccess(res.Data, PBD);
           })
           .catch((err) => {
             failedAlert(JSON.stringify(err));
@@ -315,7 +288,7 @@ const FlightInformation: React.FC<FlightInformationProps> = ({
             }
           })
           .then((res) => {
-            getPriceSuccess(res, PBD);
+            getPriceSuccess(res.Data, PBD);
           })
           .catch((err) => {
             failedAlert("Periksa Koneksi Internet");

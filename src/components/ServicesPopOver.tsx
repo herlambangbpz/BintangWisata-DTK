@@ -3,6 +3,7 @@ import { RouteComponentProps, withRouter } from "react-router";
 import { connect } from "../data/connect";
 import { IonPopover, IonGrid, IonRow, IonCol, IonLabel } from "@ionic/react";
 import { AppCategory } from "../AppConfig";
+import TopUpPopOver from "../components/TopUpPopOver";
 
 interface OwnProps {
   api: string;
@@ -20,15 +21,13 @@ const ServicesPopOver: React.FC<ServicesPopOverProps> = ({
   useDarmawisataServices,
 }) => {
   const [showPopover, setShowPopover] = useState(false);
+  const [showTopupPopover, setShowTopupPopover] = useState(false);
   const [DarmawisataServices, setDarmawisataServices] = useState<any>(null);
   const [DarmawisataServicesAll, setDarmawisataServicesAll] =
     useState<any>(null);
   const [HighlightOne, setHighlightOne] = useState<any>(null);
   const [HighlightTwo, setHighlightTwo] = useState<any>(null);
   const [HighlightAll, setHighlightAll] = useState<any>(null);
-  // const [LimitedCategoriesOne, setLimitedCategoriesOne] = useState<any>(null);
-  // const [LimitedCategoriesTwo, setLimitedCategoriesTwo] = useState<any>(null);
-  // const [LimitedCategoriesAll, setLimitedCategoriesAll] = useState<any>(null);
   React.useEffect(() => {
     fetch(
       useDarmawisataServices
@@ -190,7 +189,7 @@ const ServicesPopOver: React.FC<ServicesPopOverProps> = ({
                     class="ion-text-center"
                     key={index}
                     onClick={() => {
-                      if (item.historyPysh !== "") {
+                      if (item.historyPush !== "") {
                         setShowPopover(false);
                         AppCategory === 1
                           ? history.push("/ecommerce")
@@ -213,7 +212,10 @@ const ServicesPopOver: React.FC<ServicesPopOverProps> = ({
                     class="ion-text-center"
                     key={index}
                     onClick={() => {
-                      if (item.historyPysh !== "") {
+                      if (item.historyPush === "/TopUp") {
+                        setShowPopover(false);
+                        setShowTopupPopover(true);
+                      } else if (item.historyPush !== "") {
                         setShowPopover(false);
                         AppCategory === 1
                           ? history.push("/ecommerce")
@@ -230,6 +232,12 @@ const ServicesPopOver: React.FC<ServicesPopOverProps> = ({
           </IonRow>
         </IonGrid>
       </IonPopover>
+      <TopUpPopOver
+        showTopupPopover={showTopupPopover}
+        setShowTopupPopover={(v) => {
+          setShowTopupPopover(v);
+        }}
+      />
     </>
   );
 };

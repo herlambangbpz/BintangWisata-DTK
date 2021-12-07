@@ -62,11 +62,11 @@
   {
     "label": "Pulsa",
     "imagePath": "assets/icon/PulsaIcon.svg",
-    "historyPush": "/Prepaid"
+    "historyPush": "/TopUp"
   },
   {
     "label": "PPOB",
     "imagePath": "assets/icon/PPOBIcon.svg",
-    "historyPush": "/PPOB"
+    "historyPush": "/TopUp"
   }
 ]

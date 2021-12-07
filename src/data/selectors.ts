@@ -35,6 +35,17 @@ export const getAirlineBookingNumberOfInfant = (state: AppState) =>
   state.airline.AirlineBookingNumberOfInfant;
 export const getAirlineBookingNumberOfPaxTotal = (state: AppState) =>
   state.airline.AirlineBookingNumberOfPaxTotal;
+
+export const getHotelSearch = (state: AppState) => state.hotel.HotelSearch;
+export const getHotelSearchCheckInDate = (state: AppState) =>
+  state.hotel.HotelSearchCheckInDate;
+export const getHotelSearchCheckOutDate = (state: AppState) =>
+  state.hotel.HotelSearchCheckOutDate;
+export const getHotelSearchRoom = (state: AppState) =>
+  state.hotel.HotelSearchRoom;
+export const getHotelSearchRoomType = (state: AppState) =>
+  state.hotel.HotelSearchRoomType;
+
 export const getUserData = createSelector(
   getUserName,
   getUserEmail,
@@ -90,6 +101,28 @@ export const getAirlineBooking = createSelector(
       AirlineBookingNumberOfChild: AirlineBookingNumberOfChild,
       AirlineBookingNumberOfInfant: AirlineBookingNumberOfInfant,
       AirlineBookingNumberOfPaxTotal: AirlineBookingNumberOfPaxTotal,
+    };
+  }
+);
+export const getHotelSearchData = createSelector(
+  getHotelSearch,
+  getHotelSearchCheckInDate,
+  getHotelSearchCheckOutDate,
+  getHotelSearchRoom,
+  getHotelSearchRoomType,
+  (
+    HotelSearch,
+    HotelSearchCheckInDate,
+    HotelSearchCheckOutDate,
+    HotelSearchRoom,
+    HotelSearchRoomType
+  ) => {
+    return {
+      HotelSearch: HotelSearch,
+      HotelSearchCheckInDate: HotelSearchCheckInDate,
+      HotelSearchCheckOutDate: HotelSearchCheckOutDate,
+      HotelSearchRoom: HotelSearchRoom,
+      HotelSearchRoomType: HotelSearchRoomType,
     };
   }
 );

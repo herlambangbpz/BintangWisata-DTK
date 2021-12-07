@@ -1,36 +1,29 @@
 import {
   IonBackButton,
-  IonBadge,
   IonButton,
   IonButtons,
   IonCard,
   IonCardContent,
   IonCol,
   IonContent,
-  IonGrid,
   IonHeader,
   IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
   IonPage,
   IonRow,
+  IonSelect,
+  IonSelectOption,
   IonText,
   IonTitle,
   IonToolbar,
-  useIonViewDidEnter,
 } from "@ionic/react";
-import {
-  arrowForward,
-  chevronBackOutline,
-  ellipse,
-  filter,
-  funnel,
-} from "ionicons/icons";
+import { Slider } from "antd";
+import { chevronBackOutline, filter, funnel, star } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
-// import { AppId, MainUrl } from '../../AppConfig';
-// import { HTTP } from '@ionic-native/http';
-import AirlineSearchFrom from "../../components/AirlineSearch/AirlineSearchForm";
-import AirlineSearchUpdateButton from "../../components/AirlineSearch/AirlineSearchUpdateButton";
-import { setAirlineFlightDeparture } from "../../data/airline/airline.actions";
 import { connect } from "../../data/connect";
 import * as selectors from "../../data/selectors";
 import { rupiah } from "../../helpers/currency";
@@ -39,23 +32,18 @@ import "./SearchResult.scss";
 
 interface OwnProps {}
 interface StateProps {
-  AirlineBooking: any;
+  SearchResult: any;
   UserData: any;
-  AirlineFlightJourney: any;
 }
-interface DispatchProps {
-  setAirlineFlightDeparture: typeof setAirlineFlightDeparture;
-}
+interface DispatchProps {}
 interface SearchResultProps
   extends OwnProps,
     StateProps,
     DispatchProps,
     RouteComponentProps {}
-const AirlineSearchResult: React.FC<SearchResultProps> = ({
-  AirlineBooking,
+const HotelSearchResult: React.FC<SearchResultProps> = ({
+  SearchResult,
   UserData,
-  AirlineFlightJourney,
-  setAirlineFlightDeparture,
   history,
 }) => {
   const [BottomDrawerIsOpen, setBottomDrawerIsOpen] = useState(false);
@@ -68,6 +56,9 @@ const AirlineSearchResult: React.FC<SearchResultProps> = ({
   const [BottomDrawerCardStyle, setBottomDrawerCardStyle] = useState({
     bottom: "-100vh",
   });
+  const [FilterPriceMin, setFilterPriceMin] = useState(0);
+  const [FilterPriceMax, setFilterPriceMax] = useState(10000000);
+
   useEffect(() => {
     if (BottomDrawerIsDestroy) {
       // open
@@ -104,36 +95,26 @@ const AirlineSearchResult: React.FC<SearchResultProps> = ({
       }, 100);
     }
   }, [BottomDrawerIsDestroy]);
-  useEffect(() => {
-    if (AirlineFlightJourney) {
-      setBottomDrawerIsDestroy(true);
-    }
-  }, [AirlineFlightJourney]);
-  useIonViewDidEnter(() => {
-    if (!AirlineFlightJourney) {
-      history.replace("/airlineSearch");
-    }
-  });
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar color="primary" className="">
           <IonButtons slot="start">
             <IonBackButton
-              defaultHref="/airlineSearch"
+              defaultHref="/hotelSearch"
               icon={chevronBackOutline}
             ></IonBackButton>
           </IonButtons>
           <IonTitle className="ion-no-padding">
             <b>
-              {AirlineBooking.AirlineBookingOrigin} -{" "}
-              {AirlineBooking.AirlineBookingDestination}
+              {SearchResult.totalItem || 0} Hotel di{" "}
+              {SearchResult.Booking.cityName || ""}
             </b>
           </IonTitle>
           <IonTitle className="ion-sub-title ion-no-padding">
-            {stringDateConvert(AirlineBooking.AirlineBookingDepartureDate)}{" "}
-            <IonIcon icon={ellipse}></IonIcon>{" "}
-            {AirlineBooking.AirlineBookingNumberOfPaxTotal} Orang
+            {stringDateConvert(SearchResult.Booking.checkInDate || "")}
+            {" - "}
+            {stringDateConvert(SearchResult.Booking.checkOutDate || "")}
           </IonTitle>
           <IonButtons slot="end" className="ion-margin-end">
             <IonButton
@@ -142,99 +123,108 @@ const AirlineSearchResult: React.FC<SearchResultProps> = ({
                 setBottomDrawerIsDestroy(false);
               }}
             >
-              Ubah
+              Filter
             </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen={true} class="airlineSearch gray-bg">
-        {AirlineFlightJourney && AirlineFlightJourney.Departure
-          ? AirlineFlightJourney.Departure.map((item, index) => (
+      <IonContent fullscreen={true} class="gray-bg">
+        {SearchResult.Hotel
+          ? SearchResult.Hotel.hotels.map((item) => (
               <IonCard
-                className="ion-p-8"
-                key={index}
-                onClick={async () => {
-                  setAirlineFlightDeparture(item);
-                  if (AirlineBooking.AirlineBookingTripType === "OneWay") {
-                    history.push("/airlineFlightInformation");
+                className="ion-margin"
+                onClick={() => {
+                  if (item.ID && item.internalCode) {
+                    history.push(
+                      encodeURI(
+                        "/hotelDetail/" + item.ID + "/" + item.internalCode
+                      )
+                    );
                   } else {
-                    history.push("/airlineSearchSecondFlight");
+                    alert(item.ID);
                   }
                 }}
               >
-                <IonGrid>
-                  <IonRow>
-                    <IonCol size="2">
-                      {/* <img
-                        src={
-                          "assets/img/domestic-airlines/ic_maskapai_lion.png"
-                        }
-                        alt=""
-                      /> */}
-                      <img
-                        src={
-                          "assets/img/Airlines/" +
-                          item.airlineID.toLowerCase() +
-                          "/" +
-                          item.airlineID.toLowerCase() +
-                          ".png"
-                        }
-                        alt=""
-                      />
-                    </IonCol>
-                    <IonCol>
-                      {item.segment[0].flightDetail[0].airlineCode}&nbsp;
-                      {item.segment[0].flightDetail[0].flightNumber}
-                    </IonCol>
-                  </IonRow>
-                  <IonRow>
-                    <IonCol size="2">
-                      <p className="ion-text-center">
-                        <IonText>{item.jiDepartTime.substring(11, 16)}</IonText>
-                        <br />
-                        <IonBadge color="light">
-                          <IonText color="medium">{item.jiOrigin}</IonText>
-                        </IonBadge>
-                      </p>
-                    </IonCol>
-                    <IonCol size="2">
-                      <img
-                        src={"assets/icon/airlinehub.svg"}
-                        alt=""
-                        width="100%"
-                      />
-                    </IonCol>
-                    <IonCol size="2">
-                      <p className="ion-text-center">
-                        <IonText>
-                          {item.jiArrivalTime.substring(11, 16)}
-                        </IonText>
-                        <br />
-                        <IonBadge color="light">
-                          <IonText color="medium">{item.jiDestination}</IonText>
-                        </IonBadge>
-                      </p>
-                    </IonCol>
-                    <IonCol className="ion-text-end">
+                <IonRow>
+                  <IonCol size="4" className="ion-no-padding">
+                    <img
+                      className="ofc"
+                      src={item.logo || "assets/img/news/news-1.jpg"}
+                      alt=""
+                      width="100%"
+                      height="100%"
+                    />
+                  </IonCol>
+                  <IonCol size="8" className="ion-p-8">
+                    <IonText>
+                      <h6>
+                        <b>{item.name || ""}</b>
+                      </h6>
+                    </IonText>
+                    <div>
                       <IonIcon
-                        size="large"
-                        color="primary"
-                        icon={arrowForward}
+                        icon={star}
+                        color="warning"
+                        hidden={item.rating > 0 ? false : true}
                       ></IonIcon>
-                    </IonCol>
-                  </IonRow>
-                  <IonRow>
-                    <IonCol>
-                      <IonText color="primary">
-                        <b>{rupiah(item.sumPrice)}</b>
-                      </IonText>
-                    </IonCol>
-                  </IonRow>
-                </IonGrid>
+                      <IonIcon
+                        icon={star}
+                        color="warning"
+                        hidden={item.rating > 1 ? false : true}
+                      ></IonIcon>
+                      <IonIcon
+                        icon={star}
+                        color="warning"
+                        hidden={item.rating > 2 ? false : true}
+                      ></IonIcon>
+                      <IonIcon
+                        icon={star}
+                        color="warning"
+                        hidden={item.rating > 3 ? false : true}
+                      ></IonIcon>
+                      <IonIcon
+                        icon={star}
+                        color="warning"
+                        hidden={item.rating > 4 ? false : true}
+                      ></IonIcon>
+                    </div>
+                    <IonText color="dark">
+                      <p>
+                        <small>
+                          {item.address ? item.address.substr(0, 30) : ""}
+                          {item.address
+                            ? item.address.length > 30
+                              ? "..."
+                              : ""
+                            : ""}
+                        </small>
+                      </p>
+                    </IonText>
+                    <IonText>
+                      <p className="ion-no-margin">
+                        {item.ratingAverage || ""}
+                        <br></br>
+                        {item.ratingAverage > 9
+                          ? "Ideal"
+                          : item.ratingAverage > 8
+                          ? "Luar Biasa"
+                          : item.ratingAverage > 7
+                          ? "Sangat Baik"
+                            ? item.ratingAverage > 6
+                              ? "Bagus"
+                              : "Dibawah Eksepektasi"
+                            : ""
+                          : ""}
+                      </p>
+                    </IonText>
+                    <IonText color="primary">
+                      <b>{rupiah(item.priceStart || 0)}</b>
+                    </IonText>
+                  </IonCol>
+                </IonRow>
               </IonCard>
             ))
           : ""}
-
         <div className="bottomDrawer" hidden={!BottomDrawerIsOpen}>
           <div
             className="bottomDrawerOpacity"
@@ -250,8 +240,76 @@ const AirlineSearchResult: React.FC<SearchResultProps> = ({
                 setBottomDrawerIsDestroy(true);
               }}
             ></div>
-            <AirlineSearchFrom></AirlineSearchFrom>
-            <AirlineSearchUpdateButton></AirlineSearchUpdateButton>
+            <IonList>
+              <IonItem>
+                <IonLabel position="stacked">Kata Kunci</IonLabel>
+                <IonInput
+                  value={""}
+                  placeholder="Kota, Area, Nama Hotel"
+                ></IonInput>
+              </IonItem>
+              <IonRow>
+                <IonCol size="12">
+                  <IonLabel position="stacked">Kisaran Harga</IonLabel>
+                </IonCol>
+                <IonCol>
+                  <IonInput value={rupiah(FilterPriceMin)} disabled></IonInput>
+                </IonCol>
+                <IonCol>
+                  <IonInput value={rupiah(FilterPriceMax)} disabled></IonInput>
+                </IonCol>
+              </IonRow>
+              <Slider
+                className="dt-slider"
+                range
+                step={1000}
+                min={0}
+                max={10000000}
+                value={[FilterPriceMin, FilterPriceMax]}
+                onChange={(v) => {
+                  setFilterPriceMin(v[0]);
+                  setFilterPriceMax(v[1]);
+                }}
+              />
+              <IonItem>
+                <IonLabel>Menampilkan Harga</IonLabel>
+                <IonSelect interface="action-sheet" value={"total"}>
+                  <IonSelectOption value="total">Total</IonSelectOption>
+                </IonSelect>
+              </IonItem>
+              <IonItem>
+                <IonLabel>Urutkan Berdasarkan</IonLabel>
+                <IonSelect interface="action-sheet" value={"popularity"}>
+                  <IonSelectOption value="price">Harga</IonSelectOption>
+                  <IonSelectOption value="popularity">
+                    Popularitas
+                  </IonSelectOption>
+                  <IonSelectOption value="latest">
+                    Produk Terbaru
+                  </IonSelectOption>
+                </IonSelect>
+              </IonItem>
+            </IonList>
+            <IonButton
+              expand="block"
+              className="text-transform-none"
+              onClick={() => {
+                setBottomDrawerIsDestroy(true);
+              }}
+            >
+              Filter
+            </IonButton>
+            <IonButton
+              color="light"
+              expand="block"
+              className="text-transform-none ion-color-primary"
+              onClick={() => {
+                setFilterPriceMin(0);
+                setFilterPriceMax(10000000);
+              }}
+            >
+              Reset
+            </IonButton>
           </div>
         </div>
         <IonCard className="tourSearchFilterSort" hidden={true}>
@@ -274,10 +332,9 @@ const AirlineSearchResult: React.FC<SearchResultProps> = ({
 };
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
-    AirlineBooking: selectors.getAirlineBooking(state),
+    SearchResult: state.hotel.HotelSearchResults,
     UserData: selectors.getUserData(state),
-    AirlineFlightJourney: state.airline.AirlineFlightJourney,
   }),
-  mapDispatchToProps: { setAirlineFlightDeparture },
-  component: React.memo(withRouter(AirlineSearchResult)),
+  mapDispatchToProps: {},
+  component: React.memo(withRouter(HotelSearchResult)),
 });

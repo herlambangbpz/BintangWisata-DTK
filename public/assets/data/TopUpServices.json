@@ -1,0 +1,97 @@
+[
+  {
+    "name": "Pulsa & Top Up",
+    "services": [
+      {
+        "label": "Pulsa",
+        "imagePath": "assets/icon/PulsaIcon.svg",
+        "historyPush": "/topupPulsa"
+      },
+      {
+        "label": "Paket Data",
+        "imagePath": "assets/icon/DataPackageIcon.svg",
+        "historyPush": "/topupDataPackage"
+      },
+      {
+        "label": "Token Listrik",
+        "imagePath": "assets/icon/PLNTokenIcon.svg",
+        "historyPush": "/topupPLNToken"
+      },
+      {
+        "label": "E-Money",
+        "imagePath": "assets/icon/EMoneyIcon.svg",
+        "historyPush": "/topupEMoney"
+      }
+    ]
+  },
+  {
+    "name": "Tagihan",
+    "services": [
+      {
+        "label": "Pulsa Pascabayar",
+        "imagePath": "assets/icon/PulsaIcon.svg",
+        "historyPush": "/topupPulsaPascaBayar"
+      },
+      {
+        "label": "Game",
+        "imagePath": "assets/icon/GameIcon.svg",
+        "historyPush": "/topupGame"
+      },
+      {
+        "label": "TV Kabel",
+        "imagePath": "assets/icon/TVKabelIcon.svg",
+        "historyPush": "/topupTVKabel"
+      },
+      {
+        "label": "Listrik",
+        "imagePath": "assets/icon/PLNIcon.svg",
+        "historyPush": "/topupPLN"
+      },
+      {
+        "label": "Telkom",
+        "imagePath": "assets/icon/TelkomIcon.svg",
+        "historyPush": "/topupTelkom"
+      },
+      {
+        "label": "PDAM",
+        "imagePath": "assets/icon/PDAMIcon.svg",
+        "historyPush": "/topupPDAM"
+      },
+      {
+        "label": "PBB",
+        "imagePath": "assets/icon/PBBIcon.svg",
+        "historyPush": "/topupPBB"
+      },
+      {
+        "label": "BPJS",
+        "imagePath": "assets/icon/BPJSIcon.svg",
+        "historyPush": "/topupBPJS"
+      },
+      {
+        "label": "PGN",
+        "imagePath": "assets/icon/PGNIcon.svg",
+        "historyPush": "/topupPGN"
+      },
+      {
+        "label": "Wifi ID",
+        "imagePath": "assets/icon/WifiIDIcon.svg",
+        "historyPush": "/topupWifiID"
+      },
+      {
+        "label": "Asuransi",
+        "imagePath": "assets/icon/AsuransiIcon.svg",
+        "historyPush": "/topupAsuransi"
+      },
+      {
+        "label": "Asuransi Kredit",
+        "imagePath": "assets/icon/AsuransiKreditIcon.svg",
+        "historyPush": "/topupAsuransiKredit"
+      },
+      {
+        "label": "Multi Finance",
+        "imagePath": "assets/icon/MultiFinanceIcon.svg",
+        "historyPush": "/topupMultiFinance"
+      }
+    ]
+  }
+]

@@ -1,3 +1,4 @@
+import { HTTP } from "@ionic-native/http";
 import {
   IonAlert,
   IonBackButton,
@@ -10,6 +11,7 @@ import {
   IonGrid,
   IonHeader,
   IonIcon,
+  IonLabel,
   IonLoading,
   IonPage,
   IonRow,
@@ -17,41 +19,29 @@ import {
   IonTitle,
   IonToolbar,
   isPlatform,
-  useIonViewDidEnter,
+  useIonViewWillEnter,
 } from "@ionic/react";
-
-import { chevronDown, chevronUp } from "ionicons/icons";
+import { Collapse, Modal } from "antd";
+import { informationCircle } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
+import { AppId, DefaultAva, MainUrl } from "../../AppConfig";
+import HotelOrderBuyerData from "../../components/Hotel/HotelOrderBuyerData";
+import HotelOrderOrderPerson from "../../components/Hotel/HotelOrderOrderPerson";
+import HotelWizard from "../../components/Hotel/HotelWizard";
 import { connect } from "../../data/connect";
+import { loadHotelOrderRoomDetail } from "../../data/hotel/hotel.actions";
 import * as selectors from "../../data/selectors";
-import { setTourPaymentAllowStatus } from "../../data/tour/tour.actions";
-import "./Order.scss";
-import { Collapse } from "antd";
-import { DefaultAva } from "../../AppConfig";
-import AirlineWizard from "../../components/Airline/AirlineWizard";
-import AirlineOrderBuyerData from "../../components/Airline/AirlineOrderBuyerData";
-import AirlineOrderOrderPerson from "../../components/Airline/AirlineOrderOrderPerson";
-import AirlineOrderBaggage from "../../components/Airline/AirlineOrderBaggage";
 import { rupiah } from "../../helpers/currency";
-import {
-  loadAirlineBookingDataBundleData,
-  loadAirlineOrderPassengersBaggage,
-} from "../../data/airline/airline.actions";
-import { AppId, MainUrl } from "../../AppConfig";
-import { HTTP } from "@ionic-native/http";
+import "./Order.scss";
 const { Panel } = Collapse;
 interface OwnProps {}
 interface StateProps {
   UserData: any;
-  ABDB: any;
-  AOPD: any;
-  AOPB?: any;
+  HORD?: any;
 }
 interface DispatchProps {
-  // setTourPaymentAllowStatus: typeof setTourPaymentAllowStatus;
-  loadAirlineBookingDataBundleData: typeof loadAirlineBookingDataBundleData;
-  loadAirlineOrderPassengersBaggage: typeof loadAirlineOrderPassengersBaggage;
+  loadHotelOrderRoomDetail: typeof loadHotelOrderRoomDetail;
 }
 interface OrderProps
   extends OwnProps,
@@ -61,12 +51,19 @@ interface OrderProps
 const Order: React.FC<OrderProps> = ({
   history,
   UserData,
-  ABDB,
-  AOPD,
-  AOPB,
-  loadAirlineBookingDataBundleData,
-  loadAirlineOrderPassengersBaggage,
+  HORD,
+  loadHotelOrderRoomDetail,
 }) => {
+  const [HotelPanelData, setHotelPanelData] = useState<any>(null);
+
+  const [HotelOrderGuest, setHotelOrderGuest] = useState<any>(
+    localStorage.getItem("HotelOrderGuest")
+      ? JSON.parse(localStorage.getItem("HotelOrderGuest") || "")
+      : null
+  );
+  const [ModalPolicy, setModalPolicy] = useState<any>(null);
+  const [ModalPolicyTitle, setModalPolicyTitle] = useState<any>(null);
+  const [ModalPolicyContent, setModalPolicyContent] = useState<any>(null);
   const [showLoading, setShowLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [headerAlert, setHeaderAlert] = useState<string>();
@@ -77,175 +74,130 @@ const Order: React.FC<OrderProps> = ({
     setMessageAlert(errorMessage);
     setShowAlert(true);
   };
-  const [UseLionOrBatik, setUseLionOrBatik] = useState(
-    (ABDB &&
-      ABDB.AirlineFlightDeparture &&
-      ABDB.AirlineFlightDeparture.airlineID === "JT") ||
-      (ABDB &&
-        ABDB.AirlineFlightDeparture &&
-        ABDB.AirlineFlightDeparture.airlineID === "ID")
-      ? true
-      : false
-  );
-  const [UseGaruda, setUseGaruda] = useState(
-    ABDB &&
-      ABDB.AirlineFlightDeparture &&
-      ABDB.AirlineFlightDeparture.airlineID === "GA"
-      ? true
-      : false
-  );
-  const [BaggageTotalPrice, setBaggageTotalPrice] = useState(null);
-  const [hiddenDetailPrice, setHiddenDetailPrice] = useState(true);
-  const [hiddenDetailPriceChevronUp, setHiddenDetailPriceChevronUp] =
-    useState(false);
-  const [hiddenDetailPriceChevronDown, setHiddenDetailPriceChevronDown] =
-    useState(true);
-  const seeDetailPrice = () => {
-    setHiddenDetailPrice(false);
-    setHiddenDetailPriceChevronUp(true);
-    setHiddenDetailPriceChevronDown(false);
+  useEffect(() => {
+    if (HORD) {
+      if (!HotelOrderGuest && !showLoading) {
+        setShowLoading(true);
+        localStorage.setItem("HotelOrderGuest", "null");
+        var MyData = JSON.stringify({
+          roomName: HORD.HotelRoomSelected.name,
+          roomID: HORD.HotelRoomSelected.ID,
+          internalCode: HORD.HotelDetail.HotelDetail.internalCode,
+          hotelID: HORD.HotelDetail.HotelDetail.ID,
+          breakfast: HORD.HotelRoomSelected.breakfast,
+          acctoken: UserData.accessToken,
+        });
+        var MyHeaders = {
+          appid: AppId,
+          RequestVerificationToken: UserData.requestVerificationToken,
+          "Content-Type": "application/json",
+        };
+        //Cordova Only
+        if (isPlatform("cordova")) {
+          HTTP.setDataSerializer("multipart");
+          HTTP.setRequestTimeout(180);
+          HTTP.post(MainUrl + "Hotel/Guest", MyData, MyHeaders)
+            .then((res) => {
+              if (res.status !== 200) {
+                alert("Periksa Koneksi anda");
+              }
+              return JSON.parse(res.data);
+            })
+            .then((res) => {
+              HotelGuestFetch(res);
+            })
+            .catch((err) => {
+              history.push("rep");
+            });
+        } else {
+          fetch(MainUrl + "Hotel/Guest", {
+            method: "POST",
+            headers: MyHeaders,
+            body: MyData,
+          })
+            .then((r) => {
+              if (r.ok) {
+                return r.json();
+              } else {
+                if (r.status === 401) {
+                  // failedAlert("Session telah habis, silahkan login ulang");
+
+                  history.push("/login");
+                } else {
+                  // failedAlert(r.statusText);
+                }
+                return r.json();
+              }
+            })
+            .then((res) => {
+              HotelGuestFetch(res);
+            })
+            .catch((err) => {
+              failedAlert("Periksa Koneksi Internet");
+            });
+        }
+      }
+    }
+  }, [HORD]);
+  useEffect(() => {
+    if (HotelOrderGuest) {
+      setHotelPanelData({
+        HotelName: HotelOrderGuest.HotelDetail.name || "",
+        HotelAddress: HotelOrderGuest.HotelDetail.address || "",
+        CheckInDate: HotelOrderGuest.CheckInDate || "",
+        CheckOutDate: HotelOrderGuest.CheckOutDate || "",
+        RoomRequest: HotelOrderGuest.Prebook.rooms || "",
+        TotalPrice: HotelOrderGuest.PriceAndPolicy.TotalPrice || 0,
+      });
+    }
+  }, [HotelOrderGuest]);
+  const HotelGuestFetch = (res) => {
+    if (res.StatusCode == 200) {
+      localStorage.setItem("HotelOrderGuest", JSON.stringify(res.Data));
+      setHotelOrderGuest(res.Data);
+      setShowLoading(false);
+    } else {
+      localStorage.removeItem("HotelOrderGuest");
+      history.replace("hotelSearch");
+      failedAlert(res.ErrorMessage || "Proses Gagal");
+    }
   };
-  const hideDetailPrice = () => {
-    setHiddenDetailPrice(true);
-    setHiddenDetailPriceChevronUp(false);
-    setHiddenDetailPriceChevronDown(true);
-  };
-  useIonViewDidEnter(() => {
-    loadAirlineBookingDataBundleData();
+  useIonViewWillEnter(() => {
+    loadHotelOrderRoomDetail();
   });
-  useEffect(() => {
-    if (!UseLionOrBatik) {
-      setUseLionOrBatik(
-        (ABDB &&
-          ABDB.AirlineFlightArrival &&
-          ABDB.AirlineFlightArrival.airlineID === "JT") ||
-          (ABDB &&
-            ABDB.AirlineFlightArrival &&
-            ABDB.AirlineFlightArrival.airlineID === "ID")
-          ? true
-          : false
-      );
-    }
-  }, [UseLionOrBatik]);
-  useEffect(() => {
-    if (!UseGaruda) {
-      setUseGaruda(
-        ABDB &&
-          ABDB.AirlineFlightDeparture &&
-          ABDB.AirlineFlightDeparture.airlineID === "GA"
-          ? true
-          : false
-      );
-    }
-  }, [UseGaruda]);
-  const calculateBaggageAirlineTotal = (t) => {
-    setBaggageTotalPrice(t);
-  };
-  const AOPDCheck = () => {
-    let count = 0;
-    AOPD.forEach((i) => {
-      if (i.PaxFirstName !== "") {
-        count = count + 1;
+  const HOGCheck = () => {
+    let status = true;
+    HotelOrderGuest.Prebook.rooms.forEach((r) => {
+      if (r.paxes === null) {
+        status = false;
+      } else {
+        r.paxes.forEach((p) => {
+          if (p.FirstName === null) {
+            status = false;
+          }
+        });
       }
     });
-    if (count >= AOPD.length) {
-      return true;
-    } else {
-      return false;
-    }
+    return status;
   };
   const submitBooking = () => {
-    const AOBS = JSON.parse(localStorage.AirlineOrderBaggageSelected);
-    const AOOP = JSON.parse(localStorage.AirlineOrderOrderPerson);
     setShowLoading(true);
-    if (AOPDCheck()) {
-      let PaxDetailArray = new Array();
-      AOPD.forEach((PaxDetail, indexItem) => {
-        const PaxType =
-          PaxDetail.PaxType === "Adult"
-            ? 0
-            : PaxDetail.PaxType === "Child"
-            ? 1
-            : PaxDetail.PaxType === "Infant"
-            ? 2
-            : 0;
-        let PaxAddOnsDeparture =
-          PaxType === 2
-            ? { baggageDetailString: "", baggageString: "" }
-            : {
-                aoOrigin: ABDB.PreBookingData.SchDeparts[0].schOrigin,
-                aoDestination: ABDB.PreBookingData.SchDeparts[0].schDestination,
-                baggageDetailString:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].desc) || "",
-                baggageString:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].code) || "",
-                baggagePrice:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].fare) || 0,
-                meals: null,
-                mealsDetail: null,
-                mealsPrice: null,
-              };
-        let PaxAddOnsArrival = ABDB.PreBookingData.SchReturns
-          ? PaxType === 2
-            ? { baggageDetailString: "", baggageString: "" }
-            : {
-                aoOrigin: ABDB.PreBookingData.SchReturns[0].schOrigin,
-                aoDestination: ABDB.PreBookingData.SchReturns[0].schDestination,
-                baggageDetailString:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].desc) || "",
-                baggageString:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].code) || "",
-                baggagePrice:
-                  (AOBS[0][indexItem] && AOBS[0][indexItem].fare) || 0,
-                meals: null,
-                mealsDetail: null,
-                mealsPrice: null,
-              }
-          : null;
-        let PaxAddOns = ABDB.PreBookingData.SchReturns
-          ? [PaxAddOnsDeparture, PaxAddOnsArrival]
-          : [PaxAddOnsDeparture];
-        // if (AOBS[0][indexItem]) {
-        //   PaxAddOns[0] = AOBS[0][indexItem]||'asd';
-        //   if (AOBS[1][indexItem]) {
-        //     PaxAddOns.push(AOBS[1][indexItem]||{});
-        //   }
-        // }
-        const tempdata = {
-          IDNumber: null,
-          addOns: PaxAddOns,
-          batikMilesNo: null,
-          birthCountry: PaxDetail.PaxBirthCountry,
-          birthDate: new Date(PaxDetail.PaxBirthDate).toISOString(),
-          firstName: PaxDetail.PaxFirstName,
-          gender: PaxDetail.PaxGender,
-          lastName: PaxDetail.PaxLastName,
-          nationality: PaxDetail.PaxNationality,
-          parent: PaxDetail.PaxParent,
-          passportExpiredDate:
-            PaxDetail.PaxPassportExpiredDate === ""
-              ? null
-              : PaxDetail.PaxPassportExpiredDate,
-          passportIssuedCountry:
-            PaxDetail.PaxPassportIssuedCountry === ""
-              ? null
-              : PaxDetail.PaxPassportIssuedCountry,
-          passportIssuedDate:
-            PaxDetail.PaxPassportIssuedDate === ""
-              ? null
-              : PaxDetail.PaxPassportIssuedDate,
-          passportNumber:
-            PaxDetail.PaxPassportNumber === ""
-              ? null
-              : PaxDetail.PaxPassportNumber,
-          garudaFrequentFlyer:
-            PaxDetail.PaxGarudaFrequentFlyer === ""
-              ? null
-              : PaxDetail.PaxGarudaFrequentFlyer,
-          title: PaxDetail.PaxTitle,
-          type: PaxType,
+    if (HotelOrderGuest && HOGCheck()) {
+      const HOG = HotelOrderGuest;
+      const HOOP = JSON.parse(localStorage.HotelOrderOrderPerson);
+      let Rooms = new Array();
+      HOG.Prebook.rooms.forEach((room, indexRoom) => {
+        const RoomTemp = {
+          email: HOOP.OrderPersonEmail,
+          isRequestChildBed: room.isRequestChildBed,
+          isSmokingRoom: room.isSmokingRoom,
+          paxes: room.paxes,
+          phone: HOOP.OrderPersonPhoneNumber,
+          requestDescription: room.requestDescription,
+          roomtype: room.roomType,
+          specialRequestArray: room.specialRequestArray,
         };
-        PaxDetailArray.push(tempdata);
+        Rooms.push(RoomTemp);
       });
       var MyHeaders = {
         appid: AppId,
@@ -253,13 +205,12 @@ const Order: React.FC<OrderProps> = ({
         RequestVerificationToken: UserData.requestVerificationToken,
       };
       var MyData = JSON.stringify({
-        PaxDetail: PaxDetailArray,
-        XTKN: ABDB.PreBookingData.XTKN,
+        rooms: Rooms,
         accToken: UserData.accessToken,
       });
       if (isPlatform("cordova")) {
         HTTP.setDataSerializer("json");
-        HTTP.post(MainUrl + "Airline/Booking", JSON.parse(MyData), MyHeaders)
+        HTTP.post(MainUrl + "Hotel/Booking", JSON.parse(MyData), MyHeaders)
           .then((res) => {
             if (res.status !== 200) {
               alert("Periksa Koneksi anda");
@@ -270,10 +221,10 @@ const Order: React.FC<OrderProps> = ({
             BookingSuccess(res);
           })
           .catch((err) => {
-            failedAlert(JSON.stringify(err));
+            failedAlert("Periksa Koneksi Internet");
           });
       } else {
-        fetch(MainUrl + "Airline/Booking", {
+        fetch(MainUrl + "Hotel/Booking", {
           method: "POST",
           headers: MyHeaders,
           body: MyData,
@@ -297,14 +248,12 @@ const Order: React.FC<OrderProps> = ({
     }
   };
   const BookingSuccess = (res) => {
-    if (res.Data && res.Data.RespStatus === "OK") {
+    if (res.StatusCode === 200 && res.Data) {
       setShowLoading(false);
-      localStorage.setItem("AirlineBookingId", res.Data.Id);
-      localStorage.setItem(
-        "AirlineBaggageTotalPrice",
-        (BaggageTotalPrice || 0).toString()
-      );
-      history.push("/airlinePayment");
+      localStorage.setItem("HotelBookingData", JSON.stringify(res.Data));
+      history.push("/hotelPayment");
+    } else if (res.StatusCode === 401) {
+      history.replace("/hotelSearch");
     } else {
       failedAlert(res.ErrorMessage);
     }
@@ -315,13 +264,16 @@ const Order: React.FC<OrderProps> = ({
       <IonHeader>
         <IonToolbar color="primary">
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/airlineFlightInformation"></IonBackButton>
+            <IonBackButton defaultHref="/hotelSearch"></IonBackButton>
           </IonButtons>
           <IonTitle>Data Pesanan</IonTitle>
         </IonToolbar>
-        <AirlineWizard WizardIndex={1}></AirlineWizard>
+        <HotelWizard
+          WizardIndex={1}
+          HotelPanelData={HotelPanelData}
+        ></HotelWizard>
       </IonHeader>
-      <IonContent fullscreen={true} className="AirlineOrder">
+      <IonContent fullscreen={true} className="hotelorder">
         {/* Login As */}
         <IonGrid className="white-bg ion-padding ion-margin-bottom">
           <IonRow>
@@ -340,23 +292,79 @@ const Order: React.FC<OrderProps> = ({
             </IonCol>
           </IonRow>
         </IonGrid>
-        <AirlineOrderOrderPerson
+        <HotelOrderOrderPerson
           name={UserData.name}
           email={UserData.email}
-        ></AirlineOrderOrderPerson>
-        <AirlineOrderBuyerData
-          UseLionOrBatik={UseLionOrBatik}
-          UseGaruda={UseGaruda}
-        ></AirlineOrderBuyerData>
-        <AirlineOrderBaggage
-          AOPB={AOPB}
-          calculateBaggageAirlineTotal={(t) => {
-            calculateBaggageAirlineTotal(t);
+        ></HotelOrderOrderPerson>
+        <HotelOrderBuyerData
+          setHotelOrderGuest={(data) => {
+            setHotelOrderGuest(data);
           }}
-          // TourProductAddOnList={TourProductDetail.TourProductAddOnList}
-          // TourBookingPriceTotal={TourBookingPriceTotal}
-          // SetAddOnPrice={setAddOnPrice}
-        ></AirlineOrderBaggage>
+          GuestRooms={
+            HotelOrderGuest &&
+            HotelOrderGuest.Prebook &&
+            HotelOrderGuest.Prebook.rooms &&
+            HotelOrderGuest.Prebook.rooms.length > 0
+              ? HotelOrderGuest.Prebook.rooms
+              : null
+          }
+        ></HotelOrderBuyerData>
+
+        <div className="ion-margin ion-padding white-bg">
+          <IonLabel
+            color="primary"
+            onClick={() => {
+              setModalPolicyTitle("Aturan Pembatalan");
+              setModalPolicyContent(
+                HotelOrderGuest && HotelOrderGuest.PriceAndPolicy
+                  ? HotelOrderGuest.PriceAndPolicy.CancelPolicy
+                  : ""
+              );
+              setModalPolicy(true);
+            }}
+          >
+            Aturan Pembatalan <IonIcon icon={informationCircle}></IonIcon>
+          </IonLabel>
+        </div>
+        <div className="ion-margin ion-padding white-bg">
+          <IonLabel
+            color="primary"
+            onClick={() => {
+              setModalPolicyTitle("AChild and Extrabed Policy");
+              setModalPolicyContent(
+                HotelOrderGuest && HotelOrderGuest.PriceAndPolicy
+                  ? HotelOrderGuest.PriceAndPolicy.AdditionalInformation
+                  : ""
+              );
+              setModalPolicy(true);
+            }}
+          >
+            Child and Extrabed Policy&nbsp;
+            <IonIcon icon={informationCircle}></IonIcon>
+          </IonLabel>
+        </div>
+        <div
+          style={{ backgroundColor: "#FF8551" }}
+          className="ion-m-8 ion-padding"
+          hidden={true}
+        >
+          <IonLabel color="light">
+            Saldo Anda tidak mencukupi untuk melakukan transaksi. Harap
+            melakukan deposit terlebih dahulu.
+          </IonLabel>
+        </div>
+        <Modal
+          title={ModalPolicyTitle}
+          visible={ModalPolicy}
+          footer={null}
+          onCancel={() => setModalPolicy(false)}
+        >
+          <div
+            dangerouslySetInnerHTML={{
+              __html: ModalPolicyContent || "",
+            }}
+          ></div>
+        </Modal>
       </IonContent>
 
       <IonFooter>
@@ -368,179 +376,13 @@ const Order: React.FC<OrderProps> = ({
               </IonCol>
               <IonCol size="6" className="ion-text-right">
                 <IonText>
-                  <h5 className="ion-no-margin">
-                    {ABDB && ABDB.PriceData
-                      ? rupiah(ABDB.PriceData.SumFare + BaggageTotalPrice)
+                  <h6 className="ion-no-margin ion-no-padding">
+                    {HotelOrderGuest && HotelOrderGuest.PriceAndPolicy
+                      ? rupiah(HotelOrderGuest.PriceAndPolicy.TotalPrice || 0)
                       : "Rp 0"}
-                    {/* {Price !== null ? rupiah(Price || 0) : "Rp 0"} */}
-                    <IonIcon
-                      icon={chevronUp}
-                      hidden={hiddenDetailPriceChevronUp}
-                      size="large"
-                      color="primary"
-                      onClick={() => seeDetailPrice()}
-                    ></IonIcon>
-                    <IonIcon
-                      icon={chevronDown}
-                      hidden={hiddenDetailPriceChevronDown}
-                      size="large"
-                      color="primary"
-                      onClick={() => hideDetailPrice()}
-                    ></IonIcon>
-                  </h5>
+                  </h6>
                 </IonText>
               </IonCol>
-            </IonRow>
-            <IonRow hidden={hiddenDetailPrice}>
-              <IonCol size="12">
-                <IonText color="dark">
-                  {ABDB &&
-                  ABDB.PreBookingData &&
-                  ABDB.PreBookingData.TripType === "RoundTrip"
-                    ? "Pergi - Pulang"
-                    : "Pergi"}
-                </IonText>
-              </IonCol>
-              {/* Dewasa */}
-              <IonCol
-                size="6"
-                hidden={
-                  ABDB &&
-                  ABDB.PreBookingData &&
-                  ABDB.PreBookingData.PaxAdult > 0
-                    ? false
-                    : true
-                }
-              >
-                <IonText color="medium">
-                  {(ABDB &&
-                    ABDB.PreBookingData &&
-                    ABDB.PreBookingData.PaxAdult) ||
-                    0}
-                  {"x "}
-                  Dewasa
-                </IonText>
-              </IonCol>
-              <IonCol
-                size="6"
-                className="ion-text-right"
-                hidden={
-                  ABDB &&
-                  ABDB.PreBookingData &&
-                  ABDB.PreBookingData.PaxAdult > 0
-                    ? false
-                    : true
-                }
-              >
-                <IonText color="medium">
-                  {rupiah(
-                    (ABDB &&
-                      ABDB.PreBookingData &&
-                      ABDB.PreBookingData.PaxAdult > 0 &&
-                      ABDB.PreBookingData.PriceDetail[0].totalFare) ||
-                      "0"
-                  )}
-                </IonText>
-              </IonCol>
-              {/* Anak-anak */}
-              <IonCol
-                size="6"
-                hidden={
-                  ABDB &&
-                  ABDB.PreBookingData &&
-                  ABDB.PreBookingData.PaxChild > 0
-                    ? false
-                    : true
-                }
-              >
-                <IonText color="medium">
-                  {(ABDB &&
-                    ABDB.PreBookingData &&
-                    ABDB.PreBookingData.PaxChild) ||
-                    0}
-                  {"x "}
-                  Anak
-                </IonText>
-              </IonCol>
-              <IonCol
-                size="6"
-                className="ion-text-right"
-                hidden={
-                  ABDB &&
-                  ABDB.PreBookingData &&
-                  ABDB.PreBookingData.PaxChild > 0
-                    ? false
-                    : true
-                }
-              >
-                <IonText color="medium">
-                  {rupiah(
-                    (ABDB &&
-                      ABDB.PreBookingData &&
-                      ABDB.PreBookingData.PaxChild > 0 &&
-                      ABDB.PreBookingData.PriceDetail[1].totalFare) ||
-                      "0"
-                  )}
-                </IonText>
-              </IonCol>
-              {/* Bayi */}
-              <IonCol
-                size="6"
-                hidden={
-                  ABDB &&
-                  ABDB.PreBookingData &&
-                  ABDB.PreBookingData.PaxInfant > 0
-                    ? false
-                    : true
-                }
-              >
-                <IonText color="medium">
-                  {(ABDB &&
-                    ABDB.PreBookingData &&
-                    ABDB.PreBookingData.PaxInfant) ||
-                    0}
-                  {"x "}
-                  Bayi
-                </IonText>
-              </IonCol>
-              <IonCol
-                size="6"
-                className="ion-text-right"
-                hidden={
-                  ABDB &&
-                  ABDB.PreBookingData &&
-                  ABDB.PreBookingData.PaxInfant > 0
-                    ? false
-                    : true
-                }
-              >
-                <IonText color="medium">
-                  {rupiah(
-                    (ABDB &&
-                      ABDB.PreBookingData &&
-                      ABDB.PreBookingData.PaxInfant > 0 &&
-                      ABDB.PreBookingData.PriceDetail[2].totalFare) ||
-                      "0"
-                  )}
-                </IonText>
-              </IonCol>
-              {/* Baggage */}
-              <IonCol size="6">
-                <IonText color="medium">Bagasi</IonText>
-              </IonCol>
-              <IonCol size="6" className="ion-text-right">
-                <IonText color="medium">
-                  {rupiah(BaggageTotalPrice || 0)}
-                </IonText>
-              </IonCol>
-              {/* <IonCol
-                size="12"
-                hidden={
-                  ABDB && ABDB.PriceData.TripType === "RoundTrip" ? false : true
-                }
-              >
-                <IonText color="medium">Pulang</IonText>
-              </IonCol> */}
             </IonRow>
           </IonGrid>
           <IonGrid>
@@ -573,13 +415,8 @@ const Order: React.FC<OrderProps> = ({
 export default connect<{}, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({
     UserData: selectors.getUserData(state),
-    ABDB: state.airline.AirlineBookingDataBundle,
-    AOPD: state.airline.AirlineOrderPassengersData,
-    AOPB: state.airline.AirlineOrderPassengersBaggage,
+    HORD: state.hotel.HotelOrderRoomDetail,
   }),
-  mapDispatchToProps: {
-    loadAirlineBookingDataBundleData,
-    loadAirlineOrderPassengersBaggage,
-  },
+  mapDispatchToProps: { loadHotelOrderRoomDetail },
   component: React.memo(withRouter(Order)),
 });

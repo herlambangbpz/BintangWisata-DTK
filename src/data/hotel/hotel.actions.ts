@@ -1,5 +1,14 @@
 import { ActionType } from "../../util/types";
 import { HotelState } from "./hotel.state";
+import {
+  getHotelOrderRoomDetailData,
+  setHotelOrderRoomDetailData,
+} from "../hotelApi";
+export const loadHotelOrderRoomDetail =
+  () => async (dispatch: React.Dispatch<any>) => {
+    const data = await getHotelOrderRoomDetailData();
+    dispatch(setData(data));
+  };
 export const setData = (data: Partial<HotelState>) =>
   ({
     type: "set-hotel-data",
@@ -30,6 +39,11 @@ export const setHotelSearchRoomType = (HotelSearchRoomType?: any) =>
     type: "set-hotel-search-room-type",
     HotelSearchRoomType,
   } as const);
+export const setHotelSearchResults = (HotelSearchResults?: any) =>
+  ({
+    type: "set-hotel-search-results",
+    HotelSearchResults,
+  } as const);
 export const setHotelDetailHCode = (HotelDetailHCode?: any) =>
   ({
     type: "set-hotel-detail-hcode",
@@ -45,12 +59,19 @@ export const setHotelDetailData = (HotelDetailData?: any) =>
     type: "set-hotel-detail-data",
     HotelDetailData,
   } as const);
-export const setHotelOrderGuestRequestParameter = (
-  HotelOrderGuestRequestParameter?: any
-) =>
+export const setHotelOrderRoomDetail =
+  (HotelOrderRoomDetail?: any) => async (dispatch: React.Dispatch<any>) => {
+    setHotelOrderRoomDetailData(HotelOrderRoomDetail);
+    loadHotelOrderRoomDetail();
+    return {
+      type: "set-hotel-order-room-detail",
+      HotelOrderRoomDetail,
+    } as const;
+  };
+export const setHotelOrderGuest = (HotelOrderGuest?: any) =>
   ({
-    type: "set-hotel-order-guest-request-parameter",
-    HotelOrderGuestRequestParameter,
+    type: "set-hotel-order-guest",
+    HotelOrderGuest,
   } as const);
 export const setHotelOrderBookingPaxes = (HotelOrderBookingPaxes?: any) =>
   ({
@@ -70,9 +91,11 @@ export type HotelAction =
   | ActionType<typeof setHotelSearchCheckOutDate>
   | ActionType<typeof setHotelSearchRoom>
   | ActionType<typeof setHotelSearchRoomType>
+  | ActionType<typeof setHotelSearchResults>
   | ActionType<typeof setHotelDetailHCode>
   | ActionType<typeof setHotelDetailICode>
   | ActionType<typeof setHotelDetailData>
-  | ActionType<typeof setHotelOrderGuestRequestParameter>
+  | ActionType<typeof setHotelOrderRoomDetail>
+  | ActionType<typeof setHotelOrderGuest>
   | ActionType<typeof setHotelOrderBookingPaxes>
   | ActionType<typeof setHotelOrderIdOrder>;

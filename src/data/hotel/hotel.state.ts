@@ -4,13 +4,14 @@ export interface HotelState {
   HotelSearchCheckOutDate?: Date;
   HotelSearchRoom?: number;
   HotelSearchRoomType?: any;
-
+  HotelSearchResults?: any;
   //HotelDetails
   HotelDetailHCode?: string;
   HotelDetailICode?: string;
   HotelDetailData?: any;
   //HotelOrder
-  HotelOrderGuestRequestParameter?: any;
+  HotelOrderRoomDetail?: any;
+  HotelOrderGuest?: any;
   HotelOrderBookingPaxes?: any;
   HotelOrderIdOrder?: string;
 }

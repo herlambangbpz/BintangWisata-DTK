@@ -71,8 +71,11 @@ const AirlineOrderBaggage: React.FC<AirlineOrderBaggageProps> = ({
   history,
   UserData,
 }) => {
+  console.log(ABDB);
+
+  const [showLoading, setShowLoading] = useState(false);
   const [ModalBaggage, setModalBaggage] = useState(false);
-  const [HideBaggage, setHideBaggage] = useState(true);
+  const [BaggageStatus, setBaggageStatus] = useState<any>(null);
   const [BaggageData, setBaggageData] = useState<any>(null);
   const [BaggagePriceTotalDeparture, setBaggagePriceTotalDeparture] =
     useState<any>(0);
@@ -186,9 +189,12 @@ const AirlineOrderBaggage: React.FC<AirlineOrderBaggageProps> = ({
   const CheckAddOnSuccess = (res: any) => {
     if (res.Data) {
       if (
-        res.Data.baggage.length > 0 &&
-        res.Data.baggage[0].baggageInfos === null
+        res.Data.baggage === null ||
+        (res.Data.baggage.length > 0 &&
+          res.Data.baggage[0].baggageInfos === null)
       ) {
+        setBaggageStatus("notavailable");
+        setBaggageData(null);
         setShowLoading(false);
         return;
       }
@@ -248,9 +254,10 @@ const AirlineOrderBaggage: React.FC<AirlineOrderBaggageProps> = ({
             );
           }
         }
-        setHideBaggage(false);
+        setBaggageStatus("available");
         // BaggageFill(res.baggage)
       } else {
+        setBaggageStatus("notavailable");
         setBaggageData(null);
       }
     } else {
@@ -269,8 +276,9 @@ const AirlineOrderBaggage: React.FC<AirlineOrderBaggageProps> = ({
   useIonViewDidEnter(() => {
     calculateBaggage();
   });
+
   useEffect(() => {
-    setHideBaggage(true);
+    setBaggageStatus(null);
     if (AOPD && ABDB) {
       if (AOPDCheck() && localStorage.AirlineOrderOrderPerson) {
         const AOOP = JSON.parse(localStorage.AirlineOrderOrderPerson);
@@ -379,8 +387,6 @@ const AirlineOrderBaggage: React.FC<AirlineOrderBaggageProps> = ({
   //   }
   //   setModal(false);
   // };
-
-  const [showLoading, setShowLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [headerAlert, setHeaderAlert] = useState<string>();
   const [messageAlert, setMessageAlert] = useState<string>();
@@ -390,6 +396,7 @@ const AirlineOrderBaggage: React.FC<AirlineOrderBaggageProps> = ({
     setMessageAlert(errorMessage);
     setShowAlert(true);
   };
+
   const AOPDCheck = () => {
     let count = 0;
     AOPD.forEach((i) => {
@@ -411,308 +418,302 @@ const AirlineOrderBaggage: React.FC<AirlineOrderBaggageProps> = ({
       failedAlert("Pastikan data penumpang sudah terisi dengan benar");
     }
   };
-  if (HideBaggage) {
-    return <div></div>;
-  } else {
-    return (
-      <div className="ion-no-padding">
-        <IonText class="ion-padding" color="dark">
-          <small>Layanan Tambahan</small>
-        </IonText>
-        <IonCard
-          className="ion-activatable ripple-parent ion-margin-bottom"
-          onClick={() => OpenBaggage()}
-        >
-          <IonCardContent>
-            <IonGrid>
-              <IonRow>
-                <IonCol size="10">
-                  <IonIcon
-                    icon={briefcase}
-                    className="ion-margin-end"
-                  ></IonIcon>
-                  <IonText>Bagasi</IonText>
-                </IonCol>
-                <IonCol className="ion-text-right">
-                  <IonIcon icon={chevronForward} color="primary"></IonIcon>
-                </IonCol>
-              </IonRow>
-            </IonGrid>
-            {/* <IonText color="success">
+  return (
+    <div
+      className="ion-no-padding"
+      hidden={BaggageStatus === "notavailable" ? true : false}
+    >
+      <IonText class="ion-padding" color="dark">
+        <small>Layanan Tambahan</small>
+      </IonText>
+      <IonCard
+        className="ion-activatable ripple-parent ion-margin-bottom"
+        onClick={() => {
+          if (BaggageStatus === "available") {
+            OpenBaggage();
+          }
+        }}
+      >
+        <IonCardContent>
+          <IonGrid>
+            <IonRow>
+              <IonCol size="10">
+                <IonIcon icon={briefcase} className="ion-margin-end"></IonIcon>
+                <IonText
+                  color={BaggageStatus === "available" ? "dark" : "medium"}
+                >
+                  {BaggageStatus === "available"
+                    ? "Bagasi"
+                    : "Menunggu Data Penumpang"}
+                </IonText>
+              </IonCol>
+              <IonCol className="ion-text-right">
+                <IonIcon icon={chevronForward} color="primary"></IonIcon>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+          {/* <IonText color="success">
             <small>(Bagasi terisi. Klik untuk lihat dan ubah)</small>
           </IonText> */}
-            <IonRippleEffect></IonRippleEffect>
-          </IonCardContent>
-        </IonCard>
-        <IonCard
-          hidden={true}
-          className="ion-activatable ripple-parent ion-margin-bottom"
-          onClick={() => setModalAddOns(true)}
-        >
-          <IonCardContent>
-            <IonGrid>
-              <IonRow>
-                <IonCol size="10">
-                  <IonIcon
-                    icon={briefcase}
-                    className="ion-margin-end"
-                  ></IonIcon>
-                  <IonText>Data Add Ons</IonText>
-                </IonCol>
-                <IonCol className="ion-text-right">
-                  <IonIcon icon={chevronForward} color="primary"></IonIcon>
-                </IonCol>
-              </IonRow>
-            </IonGrid>
-            {/* <IonText color="success">
+          <IonRippleEffect></IonRippleEffect>
+        </IonCardContent>
+      </IonCard>
+      <IonCard
+        hidden={true}
+        className="ion-activatable ripple-parent ion-margin-bottom"
+        onClick={() => setModalAddOns(true)}
+      >
+        <IonCardContent>
+          <IonGrid>
+            <IonRow>
+              <IonCol size="10">
+                <IonIcon icon={briefcase} className="ion-margin-end"></IonIcon>
+                <IonText>Data Add Ons</IonText>
+              </IonCol>
+              <IonCol className="ion-text-right">
+                <IonIcon icon={chevronForward} color="primary"></IonIcon>
+              </IonCol>
+            </IonRow>
+          </IonGrid>
+          {/* <IonText color="success">
             <small>(Bagasi terisi. Klik untuk lihat dan ubah)</small>
           </IonText> */}
-            <IonRippleEffect></IonRippleEffect>
-          </IonCardContent>
-        </IonCard>
+          <IonRippleEffect></IonRippleEffect>
+        </IonCardContent>
+      </IonCard>
 
-        {/* Modal Order Additional Facilities */}
-        <IonModal isOpen={ModalBaggage}>
-          <IonContent className="gray-bg">
-            <DefaultToolbar
-              title="Bagasi"
-              color="primary"
-              backButtonRoute={() => {
-                setModalBaggage(false);
-              }}
-            />
-            <Lottie
-              animationData={loadingLottie}
-              hidden={AOPB ? true : false}
-            />
-            <div hidden={!AOPB ? true : false}>
-              <IonGrid>
-                <IonRow>
-                  <IonCol>
-                    <IonText>Penerbangan Pergi</IonText>
-                  </IonCol>
-                </IonRow>
-              </IonGrid>
-              <IonGrid className="white-bg">
-                <IonRow>
-                  <IonCol size="2">
-                    <img
-                      src={`assets/img/Airlines/${
-                        (ABDB &&
-                          ABDB.AirlineFlightDeparture &&
-                          ABDB.AirlineFlightDeparture.airlineID.toLowerCase()) ||
-                        ""
-                      }/${
-                        (ABDB &&
-                          ABDB.AirlineFlightDeparture &&
-                          ABDB.AirlineFlightDeparture.airlineID.toLowerCase()) ||
-                        ""
-                      }.png`}
-                      alt=""
-                      height="16px"
-                    />
-                  </IonCol>
-                  <IonCol>
-                    <IonText>
-                      {BaggageData && BaggageData[0].origin} ➝{" "}
-                      {BaggageData && BaggageData[0].destination}
-                    </IonText>
-                  </IonCol>
-                </IonRow>
-              </IonGrid>
-              {AOPD ? (
-                AOPD.filter(
-                  (obj) => obj.PaxType === "Adult" || obj.PaxType === "Child"
-                ).map((item, index) => (
-                  // <div></div>
-                  <AirlineOrderBaggageItem
-                    indexItem={index}
-                    item={item}
-                    key={index}
-                    AOPD={AOPD}
-                    AOPB={AOPB}
-                    calculateBaggage={() => {
-                      calculateBaggage();
-                    }}
-                    indexBaggage={0}
-                    BaggageData={BaggageData}
-                    // domesticTourType={domesticTourType}
-                    // PassengerTitle={PassengerTitle}
-                  ></AirlineOrderBaggageItem>
-                ))
-              ) : (
-                <>
-                  <p></p>
-                  <IonText color="danger">⚠️ Anda belum memilih pax</IonText>
-                </>
-              )}
-              <IonGrid
-                hidden={ABDB && ABDB.AirlineFlightArrival ? false : true}
-              >
-                <IonRow>
-                  <IonCol>
-                    <IonText>Penerbangan Pulang</IonText>
-                  </IonCol>
-                </IonRow>
-              </IonGrid>
-              <IonGrid
-                className="white-bg"
-                hidden={ABDB && ABDB.AirlineFlightArrival ? false : true}
-              >
-                <IonRow>
-                  <IonCol size="2">
-                    <img
-                      src={`assets/img/Airlines/${
-                        (ABDB &&
-                          ABDB.AirlineFlightArrival &&
-                          ABDB.AirlineFlightArrival.airlineID.toLowerCase()) ||
-                        ""
-                      }/${
-                        (ABDB &&
-                          ABDB.AirlineFlightArrival &&
-                          ABDB.AirlineFlightArrival.airlineID.toLowerCase()) ||
-                        ""
-                      }.png`}
-                      alt=""
-                      height="16px"
-                    />
-                  </IonCol>
-                  <IonCol>
-                    <IonText>
-                      {BaggageData && BaggageData[1] && BaggageData[1].origin} ➝{" "}
-                      {BaggageData &&
-                        BaggageData[1] &&
-                        BaggageData[1].destination}
-                    </IonText>
-                  </IonCol>
-                </IonRow>
-              </IonGrid>
-              {AOPD && ABDB && ABDB.AirlineFlightArrival ? (
-                AOPD.filter(
-                  (obj) => obj.PaxType === "Adult" || obj.PaxType === "Child"
-                ).map((item, index) => (
-                  // <div></div>
-                  <AirlineOrderBaggageItem
-                    indexItem={index}
-                    item={item}
-                    AOPD={AOPD}
-                    key={index}
-                    AOPB={AOPB}
-                    calculateBaggage={() => {
-                      calculateBaggage();
-                    }}
-                    indexBaggage={1}
-                    BaggageData={BaggageData}
-                    // domesticTourType={domesticTourType}
-                    // PassengerTitle={PassengerTitle}
-                  ></AirlineOrderBaggageItem>
-                ))
-              ) : (
-                <>
-                  <p></p>
-                </>
-              )}
-            </div>
-          </IonContent>
-          <IonFooter>
-            <IonCard className="ion-no-margin ion-no-padding footerPrice">
-              <IonGrid>
-                <IonRow class="priceCollapse">
-                  <IonCol size="6">
-                    <IonText color="medium">Sub Total</IonText>
-                  </IonCol>
-                  <IonCol size="6" className="ion-text-right">
-                    <IonText>
-                      <h5 className="ion-no-margin">
-                        {rupiah(BaggagePriceGrandTotal)}
-                        <IonIcon
-                          icon={chevronUp}
-                          hidden={hiddenDetailPriceChevronUp}
-                          size="large"
-                          color="primary"
-                          onClick={() => seeDetailPrice()}
-                        ></IonIcon>
-                        <IonIcon
-                          icon={chevronDown}
-                          hidden={hiddenDetailPriceChevronDown}
-                          size="large"
-                          color="primary"
-                          onClick={() => hideDetailPrice()}
-                        ></IonIcon>
-                      </h5>
-                    </IonText>
-                  </IonCol>
-                </IonRow>
-                <IonRow hidden={hiddenDetailPrice}>
-                  <IonCol size="6">
-                    <IonText color="medium">
-                      {(BaggageData &&
-                        BaggageData[0] &&
-                        BaggageData[0].origin) ||
-                        ""}{" "}
-                      -{" "}
-                      {(BaggageData &&
-                        BaggageData[0] &&
-                        BaggageData[0].destination) ||
-                        ""}
-                    </IonText>
-                  </IonCol>
-                  <IonCol size="6" className="ion-text-right">
-                    <IonText color="medium">
-                      {rupiah(BaggagePriceTotalDeparture)}
-                    </IonText>
-                  </IonCol>
-                </IonRow>
-                <IonRow hidden={hiddenDetailPrice}>
-                  <IonCol size="6">
-                    <IonText color="medium">
-                      {" "}
-                      {(BaggageData &&
-                        BaggageData[1] &&
-                        BaggageData[1].origin) ||
-                        ""}{" "}
-                      -{" "}
-                      {(BaggageData &&
-                        BaggageData[1] &&
-                        BaggageData[1].destination) ||
-                        ""}
-                    </IonText>
-                  </IonCol>
-                  <IonCol size="6" className="ion-text-right">
-                    <IonText color="medium">
-                      {" "}
-                      {rupiah(BaggagePriceTotalArrival)}
-                    </IonText>
-                  </IonCol>
-                </IonRow>
-                <IonRow>
-                  <IonCol>
-                    <IonButton
-                      className="text-transform-none"
-                      size="large"
-                      expand="block"
-                      // onClick={() => Pay()}
-                      onClick={() => setModalBaggage(false)}
-                    >
-                      Simpan
-                    </IonButton>
-                  </IonCol>
-                </IonRow>
-              </IonGrid>
-            </IonCard>
-          </IonFooter>
-        </IonModal>
-        <IonLoading isOpen={showLoading} message={"Mohon Tunggu..."} />
-        <IonAlert
-          isOpen={showAlert}
-          onDidDismiss={() => setShowAlert(false)}
-          header={headerAlert}
-          message={messageAlert}
-          buttons={["OK"]}
-        />
-      </div>
-    );
-  }
+      {/* Modal Order Additional Facilities */}
+      <IonModal isOpen={ModalBaggage}>
+        <IonContent className="gray-bg">
+          <DefaultToolbar
+            title="Bagasi"
+            color="primary"
+            backButtonRoute={() => {
+              setModalBaggage(false);
+            }}
+          />
+          <Lottie animationData={loadingLottie} hidden={AOPB ? true : false} />
+          <div hidden={!AOPB ? true : false}>
+            <IonGrid>
+              <IonRow>
+                <IonCol>
+                  <IonText>Penerbangan Pergi</IonText>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+            <IonGrid className="white-bg">
+              <IonRow>
+                <IonCol size="2">
+                  <img
+                    src={`assets/img/Airlines/${
+                      (ABDB &&
+                        ABDB.AirlineFlightDeparture &&
+                        ABDB.AirlineFlightDeparture.airlineID.toLowerCase()) ||
+                      ""
+                    }/${
+                      (ABDB &&
+                        ABDB.AirlineFlightDeparture &&
+                        ABDB.AirlineFlightDeparture.airlineID.toLowerCase()) ||
+                      ""
+                    }.png`}
+                    alt=""
+                    height="16px"
+                  />
+                </IonCol>
+                <IonCol>
+                  <IonText>
+                    {BaggageData && BaggageData[0].origin} ➝{" "}
+                    {BaggageData && BaggageData[0].destination}
+                  </IonText>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+            {AOPD ? (
+              AOPD.filter(
+                (obj) => obj.PaxType === "Adult" || obj.PaxType === "Child"
+              ).map((item, index) => (
+                // <div></div>
+                <AirlineOrderBaggageItem
+                  indexItem={index}
+                  item={item}
+                  key={index}
+                  AOPD={AOPD}
+                  AOPB={AOPB}
+                  calculateBaggage={() => {
+                    calculateBaggage();
+                  }}
+                  indexBaggage={0}
+                  BaggageData={BaggageData}
+                  // domesticTourType={domesticTourType}
+                  // PassengerTitle={PassengerTitle}
+                ></AirlineOrderBaggageItem>
+              ))
+            ) : (
+              <>
+                <p></p>
+                <IonText color="danger">⚠️ Anda belum memilih pax</IonText>
+              </>
+            )}
+            <IonGrid hidden={ABDB && ABDB.AirlineFlightArrival ? false : true}>
+              <IonRow>
+                <IonCol>
+                  <IonText>Penerbangan Pulang</IonText>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+            <IonGrid
+              className="white-bg"
+              hidden={ABDB && ABDB.AirlineFlightArrival ? false : true}
+            >
+              <IonRow>
+                <IonCol size="2">
+                  <img
+                    src={`assets/img/Airlines/${
+                      (ABDB &&
+                        ABDB.AirlineFlightArrival &&
+                        ABDB.AirlineFlightArrival.airlineID.toLowerCase()) ||
+                      ""
+                    }/${
+                      (ABDB &&
+                        ABDB.AirlineFlightArrival &&
+                        ABDB.AirlineFlightArrival.airlineID.toLowerCase()) ||
+                      ""
+                    }.png`}
+                    alt=""
+                    height="16px"
+                  />
+                </IonCol>
+                <IonCol>
+                  <IonText>
+                    {BaggageData && BaggageData[1] && BaggageData[1].origin} ➝{" "}
+                    {BaggageData &&
+                      BaggageData[1] &&
+                      BaggageData[1].destination}
+                  </IonText>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+            {AOPD && ABDB && ABDB.AirlineFlightArrival ? (
+              AOPD.filter(
+                (obj) => obj.PaxType === "Adult" || obj.PaxType === "Child"
+              ).map((item, index) => (
+                // <div></div>
+                <AirlineOrderBaggageItem
+                  indexItem={index}
+                  item={item}
+                  AOPD={AOPD}
+                  key={index}
+                  AOPB={AOPB}
+                  calculateBaggage={() => {
+                    calculateBaggage();
+                  }}
+                  indexBaggage={1}
+                  BaggageData={BaggageData}
+                  // domesticTourType={domesticTourType}
+                  // PassengerTitle={PassengerTitle}
+                ></AirlineOrderBaggageItem>
+              ))
+            ) : (
+              <>
+                <p></p>
+              </>
+            )}
+          </div>
+        </IonContent>
+        <IonFooter>
+          <IonCard className="ion-no-margin ion-no-padding footerPrice">
+            <IonGrid>
+              <IonRow class="priceCollapse">
+                <IonCol size="6">
+                  <IonText color="medium">Sub Total</IonText>
+                </IonCol>
+                <IonCol size="6" className="ion-text-right">
+                  <IonText>
+                    <h5 className="ion-no-margin">
+                      {rupiah(BaggagePriceGrandTotal)}
+                      <IonIcon
+                        icon={chevronUp}
+                        hidden={hiddenDetailPriceChevronUp}
+                        size="large"
+                        color="primary"
+                        onClick={() => seeDetailPrice()}
+                      ></IonIcon>
+                      <IonIcon
+                        icon={chevronDown}
+                        hidden={hiddenDetailPriceChevronDown}
+                        size="large"
+                        color="primary"
+                        onClick={() => hideDetailPrice()}
+                      ></IonIcon>
+                    </h5>
+                  </IonText>
+                </IonCol>
+              </IonRow>
+              <IonRow hidden={hiddenDetailPrice}>
+                <IonCol size="6">
+                  <IonText color="medium">
+                    {(BaggageData && BaggageData[0] && BaggageData[0].origin) ||
+                      ""}{" "}
+                    -{" "}
+                    {(BaggageData &&
+                      BaggageData[0] &&
+                      BaggageData[0].destination) ||
+                      ""}
+                  </IonText>
+                </IonCol>
+                <IonCol size="6" className="ion-text-right">
+                  <IonText color="medium">
+                    {rupiah(BaggagePriceTotalDeparture)}
+                  </IonText>
+                </IonCol>
+              </IonRow>
+              <IonRow hidden={hiddenDetailPrice}>
+                <IonCol size="6">
+                  <IonText color="medium">
+                    {" "}
+                    {(BaggageData && BaggageData[1] && BaggageData[1].origin) ||
+                      ""}{" "}
+                    -{" "}
+                    {(BaggageData &&
+                      BaggageData[1] &&
+                      BaggageData[1].destination) ||
+                      ""}
+                  </IonText>
+                </IonCol>
+                <IonCol size="6" className="ion-text-right">
+                  <IonText color="medium">
+                    {" "}
+                    {rupiah(BaggagePriceTotalArrival)}
+                  </IonText>
+                </IonCol>
+              </IonRow>
+              <IonRow>
+                <IonCol>
+                  <IonButton
+                    className="text-transform-none"
+                    size="large"
+                    expand="block"
+                    // onClick={() => Pay()}
+                    onClick={() => setModalBaggage(false)}
+                  >
+                    Simpan
+                  </IonButton>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+          </IonCard>
+        </IonFooter>
+      </IonModal>
+      <IonLoading isOpen={showLoading} message={"Mohon Tunggu..."} />
+      <IonAlert
+        isOpen={showAlert}
+        onDidDismiss={() => setShowAlert(false)}
+        header={headerAlert}
+        message={messageAlert}
+        buttons={["OK"]}
+      />
+    </div>
+  );
 };
 export default connect<OwnProps, StateProps, DispatchProps>({
   mapStateToProps: (state) => ({

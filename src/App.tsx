@@ -86,6 +86,7 @@ import HotelComplete from "./pages/Hotel/Complete";
 import TransactionHistoryList from "./pages/Transaction/HistoryList";
 import TransactionHistoryDetail from "./pages/Transaction/HistoryDetail";
 import TransactionHistoryDetailFlightticket from "./pages/Transaction/HistoryDetailFlightticket";
+import TransactionHistoryDetailHotel from "./pages/Transaction/TransactionHistoryDetailHotel";
 import EcommerceHistoryDetail from "./pages/Transaction/EcommerceHistoryDetail";
 
 // import DokuComplete from "./pages/DokuComplete";
@@ -260,7 +261,7 @@ const VirtualTravelApp: React.FC<VirtualTravelAppProps> = ({
             {/*Hotel*/}
             <Route path="/hotelSearch" component={HotelSearch} />
             <Route path="/hotelSearchResullt" component={HotelSearchResullt} />
-            <Route path="/otelDetail" component={HotelDetail} />
+            <Route path="/hotelDetail/:hcode/:icode" component={HotelDetail} />
             <Route path="/hotelOrder" component={HotelOrder} />
             <Route path="/hotelPayment" component={HotelPayment} />
             <Route path="/hotelComplete" component={HotelComplete} />
@@ -305,6 +306,10 @@ const VirtualTravelApp: React.FC<VirtualTravelAppProps> = ({
               component={
                 loggedInStatus ? TransactionHistoryDetailFlightticket : Login
               }
+            />
+            <Route
+              path="/transactionHistoryDetailHotel/:inv"
+              component={loggedInStatus ? TransactionHistoryDetailHotel : Login}
             />
 
             <Route

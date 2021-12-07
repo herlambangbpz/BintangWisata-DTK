@@ -40,6 +40,7 @@ import {
 } from "../../data/airline/airline.actions";
 import { AppId, MainUrl } from "../../AppConfig";
 import { HTTP } from "@ionic-native/http";
+
 const { Panel } = Collapse;
 interface OwnProps {}
 interface StateProps {
@@ -362,6 +363,7 @@ const Order: React.FC<OrderProps> = ({
           name={UserData.name}
           email={UserData.email}
         ></AirlineOrderOrderPerson>
+
         <AirlineOrderBuyerData
           UseLionOrBatik={UseLionOrBatik}
           UseGaruda={UseGaruda}

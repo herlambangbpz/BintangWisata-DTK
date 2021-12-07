@@ -1,45 +1,17 @@
-.tourDetail{
-  .iconShare{
-    font-size: 24px;
+.FNNPModal::part(scroll) {
+  padding: 0 !important;
+}
+.FNNPModal {
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: black !important;
+    font-weight: normal;
   }
-  .iconStar{
-    margin-right: 4px;
-    margin-top: 8px;
-  }
-  .iconSpecification{
-    margin: 0px 4px 8px 4px;
-  }
-  .tourInfo{
-    ion-row{
-      background: #EFF0F8;
-      padding:8px;
-      margin-bottom: 16px;
-    }
-  }
-  .imageIndex{
-    ion-badge{
-      padding:8px;
-      background-color: var(--ion-color-dark, #222428) !important;
-    }
-    margin-top: -53px;
-  }
-  .full-width-slide{
-    z-index: 0;
-    img{
-      width: 100% !important;
-    }
+  .ant-tabs > .ant-tabs-nav,
+  .ant-tabs > div > .ant-tabs-nav {
+    margin: 0 24px;
   }
 
-  --background: #eeeeee;
-  .tourDetailSlides{
-    z-index: 0;
-    img{
-      width: 100%;
-    height: 240px;
-    object-fit: cover;
-    }
+  .ant-tabs-tabpane {
+    height: 80vh;
   }
-}
-.modalItenerary{
-  --background: #eeeeee;
 }

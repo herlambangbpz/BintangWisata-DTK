@@ -63,8 +63,8 @@ const Login: React.FC<LoginProps> = ({
   history,
   setUsername: setUsernameAction,
 }) => {
-  const [identity, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [identity, setUsername] = useState("willymasrur");
+  const [password, setPassword] = useState("Admin123.");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
